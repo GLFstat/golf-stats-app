@@ -1,2 +1,2 @@
 # golf-stats-app
-Stata tracker App
+Stats tracker App
