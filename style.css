@@ -34,7 +34,7 @@ main {
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 label {
@@ -43,12 +43,16 @@ label {
     font-weight: bold;
 }
 
-.toggle {
-    padding: 10px 20px;
-    margin: 5px;
-    border: none;
-    cursor: pointer;
-    background-color: #ddd;
+.toggle, .buttons button {
+    border-radius: 12px;
+    background-color: #1e73be;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.toggle:hover, .buttons button:hover {
+    background-color: #145a8a;
 }
 
 /* Make inputs and buttons larger and responsive */
@@ -80,7 +84,15 @@ main {
 }
 
 #message {
-    margin-top: 15px;
+    display: block;
+    margin: 15px auto;
+    padding: 12px;
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 10px;
+    max-width: 300px;
     font-weight: bold;
-    color: green;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
