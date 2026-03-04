@@ -9,7 +9,20 @@ body {
 header {
     background-color: #1e73be;
     color: white;
-    padding: 20px;
+    padding: 25px 15px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+h2 {
+    margin: 5px 0 0 0;
+    font-size: 20px;
 }
 
 h1 {
