@@ -7,7 +7,8 @@ body {
 }
 
 header {
-    background-color: #009e57;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #1e73be;
     color: white;
     padding: 25px 15px;
     border-bottom-left-radius: 15px;
