@@ -1,10 +1,52 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Test Page</title>
+    <meta charset="UTF-8">
+    <title>Golf Stats Tracker</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>✅ GitHub Pages is Working!</h1>
-    <p>If you see this, your page is live.</p>
+
+<header>
+    <h1>Hole Entry</h1>
+    <h2 id="holeNumber">Hole #1</h2>
+</header>
+
+<main>
+
+    <div class="form-group">
+        <label>Fairway in Regulation (FIR)</label>
+        <button class="toggle" onclick="setStat('fir', true)">Yes</button>
+        <button class="toggle" onclick="setStat('fir', false)">No</button>
+    </div>
+
+    <div class="form-group">
+        <label>Green in Regulation (GIR)</label>
+        <button class="toggle" onclick="setStat('gir', true)">Yes</button>
+        <button class="toggle" onclick="setStat('gir', false)">No</button>
+    </div>
+
+    <div class="form-group">
+        <label>Putts</label>
+        <input type="number" id="putts" min="0" max="10">
+    </div>
+
+    <div class="form-group">
+        <label>Up & Down</label>
+        <button class="toggle" onclick="setStat('updown', true)">Yes</button>
+        <button class="toggle" onclick="setStat('updown', false)">No</button>
+    </div>
+
+    <div class="buttons">
+        <button onclick="saveHole()">Save Hole</button>
+        <button onclick="nextHole()">Next Hole</button>
+        <button onclick="viewSummary()">View Summary</button>
+    </div>
+
+    <p id="message"></p>
+
+</main>
+
+<script src="script.js"></script>
 </body>
 </html>
