@@ -1026,6 +1026,14 @@ header h1 {
     margin-bottom: 2px;
 }
 
+.popup-overlay {
+    display: none;
+}
+
+.popup-overlay.active {
+    display: flex;
+}
+
 /* ===== Post-round guidance / return area ===== */
 .post-round-guidance {
     display: none;
