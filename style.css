@@ -202,7 +202,14 @@ header h1 {
     background: black;
     display: none;
     z-index: 9999;
-    pointer-events: all;
+    pointer-events: none;
+}
+
+@media screen and (orientation: landscape) {
+    #rotateOverlay {
+        display: block;
+        pointer-events: auto;
+    }
 }
 
 #rotateMessage {
@@ -825,10 +832,7 @@ header h1 {
     height: 100vh;
     background: url("images/Round-details-1.jpg") no-repeat center center;
     background-size: cover;
-
-    display: flex;
-    flex-direction: column; 
-
+    display: none;
     justify-content: center;
     align-items: flex-start;
     z-index: 200;
@@ -1217,6 +1221,29 @@ header h1 {
     box-shadow:
         0 4px 12px rgba(0,0,0,0.3),
         inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+
+.round-details-box,
+.round-form,
+.round-form .form-row,
+.detail-row,
+.form-group,
+.form-group input,
+.form-group select,
+#startRoundBtn,
+#demoRoundBtn,
+#fillTo18Btn {
+    position: relative;
+    z-index: 2;
+    pointer-events: auto;
+}
+
+
+.resume-panel.hidden,
+.post-round-guidance,
+.post-round-return-wrap {
+    pointer-events: none;
 }
 
 
