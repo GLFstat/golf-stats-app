@@ -498,7 +498,14 @@ header h1 {
     justify-content: center;
     align-items: center;
     z-index: 9999;
+    pointer-events: none; 
 }
+
+.popup-overlay.active {
+    display: flex;         
+    pointer-events: auto;   
+}
+
 
 .popup-box {
     background: white;
@@ -818,7 +825,10 @@ header h1 {
     height: 100vh;
     background: url("images/Round-details-1.jpg") no-repeat center center;
     background-size: cover;
-    display: none;
+
+    display: flex;
+    flex-direction: column; 
+
     justify-content: center;
     align-items: flex-start;
     z-index: 200;
@@ -1024,14 +1034,6 @@ header h1 {
     color: white;
     margin-top: -2px;
     margin-bottom: 2px;
-}
-
-.popup-overlay {
-    display: none;
-}
-
-.popup-overlay.active {
-    display: flex;
 }
 
 /* ===== Post-round guidance / return area ===== */
