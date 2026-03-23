@@ -433,22 +433,6 @@ header h1 {
     backdrop-filter: blur(2px);
 }
 
-.nineteenth-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-    width: 100%;
-}
-
-#viewSavedRoundsBtn {
-    width: 75%;
-    padding: 14px 20px;
-    font-size: 18px;
-    border-radius: 10px;
-}
-
-
 #saveHole.inactive {
     background-color: #aaa;
     color: #666;
@@ -1581,10 +1565,6 @@ header h1 {
 
 /* ================= Saved Round Styles ================= */
 
-
-
-
-
 .saved-rounds-screen {
     min-height: 100vh;
     padding: 24px 16px;
@@ -1708,49 +1688,4 @@ header h1 {
 
 #demoRoundBtn:active {
     transform: translateY(0);
-}
-
-#viewSavedRoundsBtn {
-    background: linear-gradient(to bottom, #333, #000);
-    color: #fff;
-    border: 1px solid #555;
-    border-radius: 6px;
-    padding: 10px;
-    font-weight: 600;
-}
-
-.nineteenth-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-    width: 100%;
-}
-
-#nineteenthSummaryBtn,
-#viewSavedRoundsBtn,
-#nineteenthNewRoundBtn {
-    width: 75%;
-    padding: 14px 20px;
-    font-size: 18px;
-    border-radius: 10px;
-    min-height: 0;
-    min-width: 0;
-}
-
-
-#savedRoundsBackBtn {
-    min-width: 340px;
-    min-height: 64px;
-    padding: 14px 28px;
-    border-radius: 20px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    display: block;
-    margin: 20px auto;
-    /* MATCH YOUR OTHER BUTTON STYLE */
-    background: linear-gradient(to bottom, #333, #000);
-    border: 1px solid #6a6a6a;
-    color: #ffffff;
-    border: none;
 }

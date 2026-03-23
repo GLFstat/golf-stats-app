@@ -1,8 +1,7 @@
 {
   "name": "Golf Stats Tracker",
   "short_name": "GolfStats",
-  "start_url": "/golf-stats-app/",
-  "scope": "/golf-stats-app/",
+  "start_url": "/index.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#000000",

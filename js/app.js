@@ -1268,7 +1268,7 @@ function updatePostRoundUI() {
         postRoundReturnBtn.textContent =
             postRoundReturnTarget === "roundComplete"
                 ? "Back to Round Complete"
-                : "Back to Round Wrap-up";
+                : "Back to 19th Hole";
     }
 
     postRoundButtonDelayTimer = setTimeout(() => {
@@ -1407,7 +1407,7 @@ function showRoundCompleteModal() {
     }
 
     if (roundCompleteCloseBtn) {
-        roundCompleteCloseBtn.textContent = detailsComplete ? "Continue to Round Wrap-Up" : "Go to Round Wrap-Up";
+        roundCompleteCloseBtn.textContent = detailsComplete ? "Continue to 19th Hole" : "Go to 19th Hole";
     }
 
     if (detailsComplete) {
