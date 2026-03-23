@@ -1737,3 +1737,20 @@ header h1 {
     min-height: 0;
     min-width: 0;
 }
+
+
+#savedRoundsBackBtn {
+    min-width: 340px;
+    min-height: 64px;
+    padding: 14px 28px;
+    border-radius: 20px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: block;
+    margin: 20px auto;
+    /* MATCH YOUR OTHER BUTTON STYLE */
+    background: linear-gradient(to bottom, #333, #000);
+    border: 1px solid #6a6a6a;
+    color: #ffffff;
+    border: none;
+}
