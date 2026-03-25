@@ -138,6 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
     checkForActiveRoundOnLoad();
 });
 
+
 // ===== Speaker Toggle =====
 const speakerToggle = document.getElementById("speakerToggle");
 if (speakerToggle) {
@@ -835,6 +836,22 @@ function buildHoleValidationMessage(missing) {
     return message;
 }
 
+function showDeleteRoundPopup() {
+    if (deleteRoundPopup) {
+        deleteRoundPopup.classList.remove("hidden");
+        deleteRoundPopup.style.display = "flex";
+        deleteRoundPopup.style.visibility = "visible";
+        deleteRoundPopup.style.opacity = "1";
+    }
+}
+
+function hideDeleteRoundPopup() {
+    if (deleteRoundPopup) {
+        deleteRoundPopup.classList.add("hidden");
+        deleteRoundPopup.style.display = "none";
+    }
+}
+
 function showHoleSaveValidationPopup() {
     const validation = getHoleSaveValidation();
 
@@ -1135,6 +1152,8 @@ function updateCoursePar() {
 }
 
 // ===== Round Completion / Post-Round =====
+
+
 function isValidTeeSlope(value) {
     const v = String(value || "").trim();
     if (!/^\d{2,3}$/.test(v)) return false;
@@ -1268,7 +1287,7 @@ function updatePostRoundUI() {
         postRoundReturnBtn.textContent =
             postRoundReturnTarget === "roundComplete"
                 ? "Back to Round Complete"
-                : "Back to 19th Hole";
+                : "Back to Round Wrap-up";
     }
 
     postRoundButtonDelayTimer = setTimeout(() => {
@@ -1321,12 +1340,7 @@ function showFinalClosurePopup(fromCompletedDetails = false) {
     finalClosurePopup.style.display = "flex";
 }
 
-if (viewSavedRoundsBtn) {
-    viewSavedRoundsBtn.addEventListener("click", () => {
-        document.getElementById("nineteenthHoleScreen")?.classList.add("hidden");
-        document.getElementById("savedRoundsScreen")?.classList.remove("hidden");
-    });
-}
+
 
 if (savedRoundsBackBtn) {
     savedRoundsBackBtn.addEventListener("click", () => {
@@ -1407,7 +1421,7 @@ function showRoundCompleteModal() {
     }
 
     if (roundCompleteCloseBtn) {
-        roundCompleteCloseBtn.textContent = detailsComplete ? "Continue to 19th Hole" : "Go to 19th Hole";
+        roundCompleteCloseBtn.textContent = detailsComplete ? "Continue to Round Wrap-up" : "Go to Round Wrap-up";
     }
 
     if (detailsComplete) {
@@ -1477,7 +1491,7 @@ function updateMissingReminder() {
 
     if (missing.length > 0) {
         el.style.display = "block";
-        el.innerHTML = `Add <span class="highlight-green">${missing.join(", ")}</span> in Round Details for better analysis.`;
+        el.innerHTML = `Add <span class="highlight-green">${missing.join(", ")}</span><br>in Round Details for better analysis.`;
     } else {
         el.style.display = "block";
         el.innerHTML = `Excellent. Your round details are complete and ready for stronger analysis and coach/recruiter review.`;
@@ -1520,6 +1534,24 @@ function populate19thHole() {
 }
 
 // ===== Static Event Listeners =====
+
+window.showSavedRoundsHub = function () {
+    const roundDetailsScreen = document.getElementById("roundDetailsScreen");
+    const appContainer = document.getElementById("appContainer");
+    const nineteenthHoleScreen = document.getElementById("nineteenthHoleScreen");
+    const savedRoundsScreen = document.getElementById("savedRoundsScreen");
+    const performanceChartsScreen = document.getElementById("performanceChartsScreen");
+    const savedRoundsListScreen = document.getElementById("savedRoundsListScreen");
+
+    if (roundDetailsScreen) roundDetailsScreen.style.display = "none";
+    if (appContainer) appContainer.style.display = "none";
+    if (nineteenthHoleScreen) nineteenthHoleScreen.classList.add("hidden");
+    if (performanceChartsScreen) performanceChartsScreen.classList.add("hidden");
+    if (savedRoundsListScreen) savedRoundsListScreen.classList.add("hidden");
+    if (savedRoundsScreen) savedRoundsScreen.classList.remove("hidden");
+};
+
+
 function wireStaticEventListeners() {
     const demoRoundBtn = document.getElementById("demoRoundBtn");
     if (demoRoundBtn) {
@@ -1668,14 +1700,39 @@ function wireStaticEventListeners() {
         });
     }
 
-    if (newRoundBtn) {
-        newRoundBtn.addEventListener("click", () => {
+if (newRoundBtn) {
+    newRoundBtn.addEventListener("click", () => {
+        const saved = getParsedActiveRound();
+
+        if (saved) {
+            showDeleteRoundPopup();
+        } else {
             clearActiveRoundStorage();
             removeFromStorage(ROUND_BG_INDEX_KEY);
             resetCurrentRound();
             showRoundDetailsScreen();
-        });
-    }
+        }
+    });
+}
+
+if (keepCurrentRoundBtn) {
+    keepCurrentRoundBtn.addEventListener("click", () => {
+        hideDeleteRoundPopup();
+    });
+}
+
+if (deleteAndStartNewBtn) {
+    deleteAndStartNewBtn.addEventListener("click", () => {
+        hideDeleteRoundPopup();
+
+        clearActiveRoundStorage();
+        removeFromStorage(ROUND_BG_INDEX_KEY);
+        resetCurrentRound();
+        showRoundDetailsScreen();
+    });
+}
+
+
 
     if (saveBtn) {
         saveBtn.addEventListener("click", () => {
@@ -1836,7 +1893,7 @@ function wireStaticEventListeners() {
         });
     }
 
-    function renderSavedRounds() {
+window.renderSavedRounds = function () {
         const savedRoundsList = document.getElementById("savedRoundsList");
         if (!savedRoundsList) return;
 
@@ -1931,29 +1988,93 @@ function wireStaticEventListeners() {
         });
     }
 
-    const viewSavedRoundsBtn = document.getElementById("viewSavedRoundsBtn");
-    if (viewSavedRoundsBtn) {
-        viewSavedRoundsBtn.addEventListener("click", () => {
-            renderSavedRounds();
-            document.getElementById("nineteenthHoleScreen")?.classList.add("hidden");
-            document.getElementById("savedRoundsScreen")?.classList.remove("hidden");
-        });
-    }
+const viewSavedRoundsBtn = document.getElementById("viewSavedRoundsBtn");
 
-    const savedRoundsBackBtn = document.getElementById("savedRoundsBackBtn");
-    if (savedRoundsBackBtn) {
-        savedRoundsBackBtn.addEventListener("click", () => {
-            document.getElementById("savedRoundsScreen")?.classList.add("hidden");
-            document.getElementById("nineteenthHoleScreen")?.classList.remove("hidden");
-        });
+
+function showPerformanceChartsScreen() {
+    const savedRoundsScreen = document.getElementById("savedRoundsScreen");
+    const performanceChartsScreen = document.getElementById("performanceChartsScreen");
+    const savedRoundsListScreen = document.getElementById("savedRoundsListScreen");
+
+    if (savedRoundsScreen) savedRoundsScreen.classList.add("hidden");
+    if (savedRoundsListScreen) savedRoundsListScreen.classList.add("hidden");
+    if (performanceChartsScreen) performanceChartsScreen.classList.remove("hidden");
+
+    if (typeof renderPerformanceReview === "function") {
+        setTimeout(() => {
+            renderPerformanceReview();
+        }, 120);
     }
+}
+
+function showSavedRoundsListScreen() {
+    const savedRoundsScreen = document.getElementById("savedRoundsScreen");
+    const performanceChartsScreen = document.getElementById("performanceChartsScreen");
+    const savedRoundsListScreen = document.getElementById("savedRoundsListScreen");
+
+    if (savedRoundsScreen) savedRoundsScreen.classList.add("hidden");
+    if (performanceChartsScreen) performanceChartsScreen.classList.add("hidden");
+    if (savedRoundsListScreen) savedRoundsListScreen.classList.remove("hidden");
+
+    if (typeof renderSavedRounds === "function") {
+        renderSavedRounds();
+    }
+}
+
+if (viewSavedRoundsBtn) {
+    viewSavedRoundsBtn.addEventListener("click", () => {
+        window.showSavedRoundsHub();
+    });
+}
+
+
+const openPerformanceChartsBtn = document.getElementById("openPerformanceChartsBtn");
+if (openPerformanceChartsBtn) {
+    openPerformanceChartsBtn.addEventListener("click", () => {
+        showPerformanceChartsScreen();
+    });
+}
+
+const openSavedRoundsListBtn = document.getElementById("openSavedRoundsListBtn");
+if (openSavedRoundsListBtn) {
+    openSavedRoundsListBtn.addEventListener("click", () => {
+        showSavedRoundsListScreen();
+    });
+}
+
+const performanceChartsBackBtn = document.getElementById("performanceChartsBackBtn");
+if (performanceChartsBackBtn) {
+    performanceChartsBackBtn.addEventListener("click", () => {
+        showSavedRoundsHub();
+    });
+}
+
+const savedRoundsListBackBtn = document.getElementById("savedRoundsListBackBtn");
+if (savedRoundsListBackBtn) {
+    savedRoundsListBackBtn.addEventListener("click", () => {
+        showSavedRoundsHub();
+    });
+}
+
+const savedRoundsHubBackBtn = document.getElementById("savedRoundsHubBackBtn");
+if (savedRoundsHubBackBtn) {
+    savedRoundsHubBackBtn.addEventListener("click", () => {
+        const savedRoundsScreen = document.getElementById("savedRoundsScreen");
+        const nineteenthHoleScreen = document.getElementById("nineteenthHoleScreen");
+
+        if (savedRoundsScreen) savedRoundsScreen.classList.add("hidden");
+        if (nineteenthHoleScreen) nineteenthHoleScreen.classList.remove("hidden");
+    });
+}
 
     if (finalClosureBtn) {
         finalClosureBtn.addEventListener("click", () => {
             playSplashToFreshRoundDetails();
         });
     }
-}
+};
+
+
 
 // ===== Window Events =====
 window.addEventListener("resize", adjustSummaryHeight);

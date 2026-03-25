@@ -300,3 +300,110 @@ function checkForActiveRoundOnLoad() {
 
     updateResumePanel();
 }
+
+function seedTestCompletedRounds() {
+    const sampleRounds = [
+        {
+            id: generateRoundId(),
+            date: new Date("2026-03-20").toISOString(),
+            version: CURRENT_DATA_VERSION,
+            roundFinalized: true,
+            details: {
+                roundDate: "2026-03-20",
+                roundType: "Tournament",
+                courseName: "Highland Meadows",
+                startingHole: "1",
+                teeSlope: "128",
+                teeRating: "71.4",
+                teeYardage: "6400",
+                frontPar: "36",
+                backPar: "36",
+                coursePar: "72"
+            },
+            summary: {
+                totalScore: 78,
+                vsPar: 6
+            },
+            holes: Array.from({ length: 18 }, (_, i) => ({
+                hole: i + 1,
+                fir: i % 2 === 0,
+                gir: i % 3 === 0,
+                updown: i % 4 === 0,
+                sand: false,
+                putts: 2,
+                penalty: 0,
+                score: 4,
+                par: 4,
+                saved: true
+            }))
+        },
+        {
+            id: generateRoundId(),
+            date: new Date("2026-03-21").toISOString(),
+            version: CURRENT_DATA_VERSION,
+            roundFinalized: true,
+            details: {
+                roundDate: "2026-03-21",
+                roundType: "Practice",
+                courseName: "Fox Hollow",
+                startingHole: "1",
+                teeSlope: "131",
+                teeRating: "72.8",
+                teeYardage: "6625",
+                frontPar: "36",
+                backPar: "36",
+                coursePar: "72"
+            },
+            summary: {
+                totalScore: 75,
+                vsPar: 3
+            },
+            holes: Array.from({ length: 18 }, (_, i) => ({
+                hole: i + 1,
+                fir: i % 2 !== 0,
+                gir: i % 3 !== 0,
+                updown: i % 5 === 0,
+                sand: i === 6 || i === 14,
+                putts: 2,
+                penalty: i === 8 ? 1 : 0,
+                score: 4,
+                par: 4,
+                saved: true
+            }))
+        },
+        {
+            id: generateRoundId(),
+            date: new Date("2026-03-22").toISOString(),
+            version: CURRENT_DATA_VERSION,
+            roundFinalized: true,
+            details: {
+                roundDate: "2026-03-22",
+                roundType: "Tournament",
+                courseName: "CommonGround",
+                startingHole: "1",
+                teeSlope: "134",
+                teeRating: "73.6",
+                teeYardage: "6840",
+                frontPar: "36",
+                backPar: "36",
+                coursePar: "72"
+            },
+            summary: {
+                totalScore: 73,
+                vsPar: 1
+            },
+            holes: Array.from({ length: 18 }, (_, i) => ({
+                hole: i + 1,
+                fir: true,
+                gir: i % 4 !== 0,
+                updown: i % 6 === 0,
+                sand: i === 11,
+                putts: i % 5 === 0 ? 1 : 2,
+                penalty: 0,
+                score: 4,
+                par: 4,
+                saved: true
+            }))
+        }
+    ];
+}
