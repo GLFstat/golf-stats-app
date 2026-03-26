@@ -119,8 +119,23 @@ function loadDemoRound() {
 }
 
 
+// ===== DEV BUILD LABEL =====
+function setDevBuildLabel() {
+    const el = document.getElementById("devBuildLabel");
+    if (!el) return;
+
+    const now = new Date();
+    const label = now.toLocaleString();
+
+    el.textContent = `DEV BUILD — ${label}`;
+}
+
+
 // ===== DOM Ready Setup =====
 document.addEventListener("DOMContentLoaded", () => {
+       // ===== INIT DEV BUILD LABEL =====
+    setDevBuildLabel();
+     // your existing startup code continues...
     initializeAppStorage();
     preloadRoundBackgrounds();
     wireCounterTouchButtons();
@@ -230,15 +245,29 @@ function updateResumePanel() {
     if (!resumeRoundPanel) return;
 
     const saved = getParsedActiveRound();
-    if (!saved || !hasResumableRoundData(saved)) {
+
+    // 🚫 HARD STOP — no saved object at all
+    if (!saved) {
         resumeRoundPanel.classList.add("hidden");
         return;
     }
 
-    const details = saved.roundDetails || {};
+    // 🚫 NO HOLES SAVED
     const savedHoleCount = Array.isArray(saved.holes)
         ? saved.holes.filter(h => h && h.saved).length
         : 0;
+
+    // 🚫 NO REAL DETAILS ENTERED
+    const details = saved.roundDetails || {};
+    const hasRealDetails = Object.values(details).some(v => String(v || "").trim() !== "");
+
+    // 🚫 NOTHING MEANINGFUL → HIDE ARF
+    if (savedHoleCount === 0 && !hasRealDetails) {
+        resumeRoundPanel.classList.add("hidden");
+        return;
+    }
+
+    // ===== EXISTING DISPLAY LOGIC =====
 
     const resumeIndex = Number(saved.currentHoleIndex) || 0;
     const resumeHole = Array.isArray(saved.playOrder) && saved.playOrder.length === 18
@@ -418,10 +447,12 @@ function hideFinalClosurePopup() {
 }
 
 function resetCurrentRound() {
+    // ===== FULL STATE RESET =====
     currentHole = 1;
     currentHoleIndex = 0;
     startingHole = 1;
     playOrder = buildPlayOrder(1);
+
     roundStarted = false;
     roundFinalized = false;
     roundJustCompleted = false;
@@ -430,6 +461,7 @@ function resetCurrentRound() {
     pendingSaveAfterValidation = false;
     autoSaveInProgress = false;
     resumingSavedRound = false;
+
     summaryReturnTarget = "app";
     postRoundButtonVisible = false;
 
@@ -438,10 +470,12 @@ function resetCurrentRound() {
         postRoundButtonDelayTimer = null;
     }
 
+    // ===== CLEAR HOLES =====
     for (let i = 0; i < 18; i++) {
         holes[i] = null;
     }
 
+    // ===== CLEAR UI =====
     clearInputs();
     clearAllValidationHighlights();
 
@@ -472,8 +506,7 @@ function resetCurrentRound() {
     const startingHoleField = document.getElementById("startingHole");
     if (startingHoleField) startingHoleField.disabled = false;
 
-    hideFinalClosurePopup();
-
+    // ===== FORCE ALL SCREENS CLOSED =====
     const roundCompleteModal = document.getElementById("roundCompleteModal");
     const summaryModal = document.getElementById("summaryModal");
 
@@ -481,8 +514,11 @@ function resetCurrentRound() {
     if (summaryModal) summaryModal.style.display = "none";
     if (nineteenthHoleScreen) nineteenthHoleScreen.classList.add("hidden");
 
+    // 🔥 CRITICAL — CLEAR STORAGE CLEANLY
     clearActiveRoundStorage();
     removeFromStorage(ROUND_BG_INDEX_KEY);
+
+    // ===== RESET UI STATE =====
     loadRoundBackground();
     updateCoursePar();
     updateParRowState();
@@ -490,6 +526,11 @@ function resetCurrentRound() {
     updateHoleScreen();
     updateResumePanel();
     updatePostRoundUI();
+
+    // 🔥 CRITICAL — FORCE APP TO ROUND DETAILS
+    showRoundDetailsScreen();
+
+    window.scrollTo(0, 0);
 }
 
 // ===== Round Detail Completion / Validation =====
@@ -902,23 +943,34 @@ function triggerSavedFeedback() {
 }
 
 function completeHoleSave() {
-    const currentStats = getStats();
+    const selectedParEl = document.querySelector('input[name="holePar"]:checked');
+    const puttsEl = document.getElementById("putts");
+    const penaltyEl = document.getElementById("penalty");
+    const scoreEl = document.getElementById("score");
+    const firEl = document.getElementById("fir");
+    const girEl = document.getElementById("gir");
+    const updownEl = document.getElementById("updown");
+    const sandEl = document.getElementById("sand");
 
-    const checkedPars = document.querySelectorAll('input[name="holePar"]:checked');
-    let selectedPar = null;
+    const selectedPar = selectedParEl ? parseInt(selectedParEl.value, 10) : null;
+    const puttsValue = puttsEl ? parseInt(puttsEl.value, 10) || 0 : 0;
+    const penaltyValue = penaltyEl ? parseInt(penaltyEl.value, 10) || 0 : 0;
+    const scoreValue = scoreEl ? parseInt(scoreEl.value, 10) || 0 : 0;
 
-    if (checkedPars.length > 1) {
+    if (selectedPar == null || scoreValue <= 0 || puttsValue <= 0) {
         if (saveConfirmPopup) saveConfirmPopup.style.display = "none";
-        alert("Select only one par value");
+        showHoleSaveValidationPopup();
         return;
     }
 
-    if (checkedPars.length === 1) {
-        selectedPar = parseInt(checkedPars[0].value, 10);
-    }
-
     holes[currentHole - 1] = {
-        ...currentStats,
+        fir: !!(firEl && firEl.checked),
+        gir: !!(girEl && girEl.checked),
+        updown: !!(updownEl && updownEl.checked),
+        sand: !!(sandEl && sandEl.checked),
+        putts: puttsValue,
+        penalty: penaltyValue,
+        score: scoreValue,
         par: selectedPar,
         saved: true
     };
@@ -1342,13 +1394,6 @@ function showFinalClosurePopup(fromCompletedDetails = false) {
 
 
 
-if (savedRoundsBackBtn) {
-    savedRoundsBackBtn.addEventListener("click", () => {
-        document.getElementById("savedRoundsScreen")?.classList.add("hidden");
-        document.getElementById("nineteenthHoleScreen")?.classList.remove("hidden");
-    });
-}
-
 function playSplashToFreshRoundDetails() {
     const splash = document.getElementById("splashScreen");
     const overlay = document.getElementById("fadeOverlay");
@@ -1454,10 +1499,10 @@ function show19thHoleScreen() {
     populate19thHole();
     update19thHoleActionState();
 
-    if (roundJustCompleted && detailsComplete) {
-        finalizeCompletedRoundIfNeeded();
-        updateResumePanel();
-    }
+    if (roundJustCompleted) {
+    finalizeCompletedRoundIfNeeded();
+    updateResumePanel();
+}
 }
 
 function getAverageScoreByPar(targetPar) {
@@ -1981,12 +2026,11 @@ window.renderSavedRounds = function () {
     }
 
     const nineteenthNewRoundBtn = document.getElementById("nineteenthNewRoundBtn");
-    if (nineteenthNewRoundBtn) {
-        nineteenthNewRoundBtn.addEventListener("click", () => {
-            document.getElementById("nineteenthHoleScreen")?.classList.add("hidden");
-            playSplashToFreshRoundDetails();
-        });
-    }
+if (nineteenthNewRoundBtn) {
+    nineteenthNewRoundBtn.addEventListener("click", () => {
+        resetCurrentRound();
+    });
+}
 
 const viewSavedRoundsBtn = document.getElementById("viewSavedRoundsBtn");
 
@@ -2023,7 +2067,26 @@ function showSavedRoundsListScreen() {
 
 if (viewSavedRoundsBtn) {
     viewSavedRoundsBtn.addEventListener("click", () => {
-        window.showSavedRoundsHub();
+        showSavedRoundsListScreen();
+    });
+}
+
+const savedRoundsBackBtn = document.getElementById("savedRoundsBackBtn");
+if (savedRoundsBackBtn) {
+    savedRoundsBackBtn.addEventListener("click", () => {
+        const savedRoundsScreen = document.getElementById("savedRoundsScreen");
+
+        if (savedRoundsScreen) {
+            savedRoundsScreen.classList.add("hidden");
+        }
+
+        if (roundJustCompleted || postRoundMode) {
+            show19thHoleScreen();
+        } else {
+            showStatsScreen();
+        }
+
+        window.scrollTo(0, 0);
     });
 }
 
@@ -2072,8 +2135,7 @@ if (savedRoundsHubBackBtn) {
             playSplashToFreshRoundDetails();
         });
     }
-};
-
+}
 
 
 // ===== Window Events =====
@@ -2098,13 +2160,16 @@ function fillAllButLastHole() {
         playOrder = buildPlayOrder(startingHole);
     }
 
+    // Standard Par 72 test layout:
+    // Front 9 = 36, Back 9 = 36, Total = 72
+    const testPars = [4, 4, 3, 5, 4, 4, 3, 5, 4, 4, 3, 4, 5, 4, 4, 3, 5, 4];
+
     for (let i = 0; i < playOrder.length - 1; i++) {
         const holeNum = playOrder[i];
-        const parOptions = [4, 4, 3, 5, 4];
-        const par = parOptions[i % parOptions.length];
+        const par = testPars[holeNum - 1];
 
         holes[holeNum - 1] = {
-            fir: Math.random() > 0.5,
+            fir: par >= 4 ? Math.random() > 0.5 : false,
             gir: Math.random() > 0.5,
             updown: Math.random() > 0.75,
             sand: Math.random() > 0.85,
@@ -2123,10 +2188,13 @@ function fillAllButLastHole() {
     syncCurrentHoleFromIndex();
     roundStarted = true;
     roundFinalized = false;
+    roundJustCompleted = false;
+    postRoundMode = false;
+    postRoundReturnTarget = "";
     persistActiveRound();
     updateHoleScreen();
 
-    console.log("✅ Test mode: 17 holes filled, ready for final hole");
+    console.log("✅ Test mode: 17 holes filled at even par, ready for final hole");
 }
 
 function resetRoundData() {
@@ -2160,6 +2228,8 @@ function resetRoundData() {
 
     console.log("🔄 Round data reset");
 }
+
+
 
 const DEV_MODE = false;
 

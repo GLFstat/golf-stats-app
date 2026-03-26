@@ -403,6 +403,45 @@
             <div id="avgUpDownValue" class="analytics-metric-value">--</div>
           </div>
         </div>
+        <!-- ========================================= -->
+<!-- FIR CHART → DOT TAP POPUP (START) -->
+<!-- ========================================= -->
+<div id="chartPointPopup" class="chart-point-popup hidden">
+
+  <div class="chart-popup-box">
+
+    <div class="chart-popup-close" id="chartPopupClose">✖</div>
+
+    <div class="chart-popup-content">
+
+      <div class="chart-popup-section">
+        <div class="chart-popup-title">Round Details</div>
+        <div id="popupCourse">Course: --</div>
+        <div id="popupDate">Date: --</div>
+      </div>
+
+      <div class="chart-popup-section">
+        <div class="chart-popup-title">FIR Context</div>
+        <div id="popupPar4FIR">Par 4 FIR: --</div>
+        <div id="popupPar5FIR">Par 5 FIR: --</div>
+      </div>
+
+      <div class="chart-popup-section">
+        <div class="chart-popup-title">Course Setup</div>
+        <div id="popupYardage">Yardage: --</div>
+        <div id="popupRating">Rating: --</div>
+        <div id="popupSlope">Slope: --</div>
+      </div>
+
+    </div>
+
+    <div id="chartPopupPointer" class="chart-popup-pointer"></div>
+
+  </div>
+</div>
+<!-- ========================================= -->
+<!-- FIR CHART → DOT TAP POPUP (END) -->
+<!-- ========================================= -->
       </div>
 
       <button
@@ -532,10 +571,13 @@ pointer-events: auto;
 DEV: Saved Rounds
 </button>
 
+
 <script src="js/state.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/analytic.js"></script>
 <script src="js/app.js"></script>
 
+<!-- ===== DEV BUILD LABEL (REMOVE BEFORE TOURNAMENT) ===== -->
+<div id="devBuildLabel"></div>
 </body>
 </html>

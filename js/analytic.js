@@ -537,6 +537,46 @@ document.addEventListener("savedRoundsShown", () => {
 });
 
 
+// ==============================================
+// FIR CHART → POPUP BASIC OPEN / CLOSE (TEST)
+// ==============================================
+
+document.addEventListener("DOMContentLoaded", () => {
+    const popup = document.getElementById("chartPointPopup");
+    const closeBtn = document.getElementById("chartPopupClose");
+
+    // TEMP TEST: click FIR chart to open popup
+    const firChart = document.getElementById("firByRoundChart");
+
+    if (firChart && popup) {
+        firChart.addEventListener("click", () => {
+            popup.classList.remove("hidden");
+        });
+    }
+
+    // Close button
+    if (closeBtn && popup) {
+        closeBtn.addEventListener("click", () => {
+            popup.classList.add("hidden");
+        });
+    }
+
+    // Click outside popup closes it
+    document.addEventListener("click", (e) => {
+        if (!popup || popup.classList.contains("hidden")) return;
+
+        const box = popup.querySelector(".chart-popup-box");
+
+        if (box && !box.contains(e.target) && e.target.id !== "firByRoundChart") {
+            popup.classList.add("hidden");
+        }
+    });
+});
+// ==============================================
+// END FIR CHART → POPUP BASIC OPEN / CLOSE (TEST)
+// ==============================================
+
+
 let currentAnalyticsChartIndex = 0;
 
 function updateAnalyticsSwiper() {

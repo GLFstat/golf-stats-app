@@ -51,13 +51,29 @@ function initializeAppStorage() {
 
 // ===== Completed Round History =====
 function getCompletedRounds() {
-    const rounds = loadFromStorage(COMPLETED_ROUNDS_KEY, []);
-    return Array.isArray(rounds) ? rounds : [];
+    const rounds = loadFromStorage(COMPLETED_ROUNDS_KEY, null);
+
+    if (Array.isArray(rounds)) {
+        return rounds;
+    }
+
+    const backupRounds = loadFromStorage("completed_rounds_backup", []);
+
+    if (Array.isArray(backupRounds)) {
+        saveToStorage(COMPLETED_ROUNDS_KEY, backupRounds);
+        return backupRounds;
+    }
+
+    return [];
 }
 
 function saveCompletedRounds(rounds) {
     const trimmed = Array.isArray(rounds) ? rounds.slice(0, MAX_COMPLETED_ROUNDS) : [];
-    return saveToStorage(COMPLETED_ROUNDS_KEY, trimmed);
+
+    const mainSaved = saveToStorage(COMPLETED_ROUNDS_KEY, trimmed);
+    const backupSaved = saveToStorage("completed_rounds_backup", trimmed);
+
+    return mainSaved && backupSaved;
 }
 
 function addCompletedRound(round) {
@@ -124,6 +140,7 @@ function buildCompletedRound() {
 }
 
 function archiveCompletedRound() {
+    console.log("🔥 archiveCompletedRound RUNNING");
     if (!roundJustCompleted || getSavedHoleCount() !== 18) {
         return true;
     }
@@ -145,8 +162,9 @@ function archiveCompletedRound() {
         return false;
     }
 
-    removeFromStorage(STORAGE_KEY);
-    removeFromStorage(ROUND_BG_INDEX_KEY);
+removeFromStorage(STORAGE_KEY);
+removeFromStorage("backup_round");
+removeFromStorage(ROUND_BG_INDEX_KEY);
 
     // IMPORTANT:
     // Do not clear post-round navigation flags here.
@@ -164,21 +182,39 @@ function finalizeCompletedRoundIfNeeded() {
 
 function clearActiveRoundStorage() {
     removeFromStorage(STORAGE_KEY);
+    removeFromStorage("backup_round");
     removeFromStorage(ROUND_BG_INDEX_KEY);
     roundFinalized = false;
 }
-
 function getParsedActiveRound() {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
+    const backupRaw = localStorage.getItem("backup_round");
+
+    if (!raw && !backupRaw) return null;
 
     try {
-        return JSON.parse(raw);
+        if (raw) {
+            return JSON.parse(raw);
+        }
     } catch (err) {
         console.error("Failed to parse active round:", err);
-        clearActiveRoundStorage();
-        return null;
     }
+
+    try {
+        if (backupRaw) {
+            console.warn("Main active round missing or bad. Restoring from backup.");
+            const parsedBackup = JSON.parse(backupRaw);
+
+            localStorage.setItem(STORAGE_KEY, backupRaw);
+            return parsedBackup;
+        }
+    } catch (backupErr) {
+        console.error("Failed to parse backup round:", backupErr);
+    }
+
+    clearActiveRoundStorage();
+    removeFromStorage("backup_round");
+    return null;
 }
 
 function hasResumableRoundData(saved) {
@@ -224,6 +260,8 @@ function persistActiveRound() {
     };
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    // 🔒 Backup save (safety layer)
+localStorage.setItem("backup_round", JSON.stringify(payload));
     updateResumePanel();
 }
 
