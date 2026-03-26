@@ -308,6 +308,7 @@ function showStatsScreen() {
     }
 
     updateHoleScreen();
+    window.scrollTo(0, 0);
 }
 
 function showRoundDetailsScreen() {
@@ -316,6 +317,7 @@ function showRoundDetailsScreen() {
     if (nineteenthHoleScreen) nineteenthHoleScreen.classList.add("hidden");
     updateResumePanel();
     updatePostRoundUI();
+    window.scrollTo(0, 0);
 }
 
 function preloadRoundBackgrounds() {
@@ -1483,9 +1485,17 @@ function showRoundCompleteModal() {
 }
 
 function show19thHoleScreen() {
+    const savedHoleCount = holes.filter(h => h && h.saved).length;
+
+    // Do not allow Round Wrap-up unless the round is actually complete
+    if (savedHoleCount < 18) {
+        showStatsScreen();
+        window.scrollTo(0, 0);
+        return;
+    }
+
     const roundCompleteModal = document.getElementById("roundCompleteModal");
     const summaryModal = document.getElementById("summaryModal");
-    const detailsComplete = arePostRoundDetailsComplete();
 
     if (roundCompleteModal) roundCompleteModal.style.display = "none";
     if (summaryModal) summaryModal.style.display = "none";
@@ -1498,11 +1508,8 @@ function show19thHoleScreen() {
 
     populate19thHole();
     update19thHoleActionState();
-
-    if (roundJustCompleted) {
-    finalizeCompletedRoundIfNeeded();
     updateResumePanel();
-}
+    window.scrollTo(0, 0);
 }
 
 function getAverageScoreByPar(targetPar) {
@@ -1594,6 +1601,8 @@ window.showSavedRoundsHub = function () {
     if (performanceChartsScreen) performanceChartsScreen.classList.add("hidden");
     if (savedRoundsListScreen) savedRoundsListScreen.classList.add("hidden");
     if (savedRoundsScreen) savedRoundsScreen.classList.remove("hidden");
+
+    window.scrollTo(0, 0);
 };
 
 
@@ -2025,110 +2034,145 @@ window.renderSavedRounds = function () {
         });
     }
 
+    
     const nineteenthNewRoundBtn = document.getElementById("nineteenthNewRoundBtn");
-if (nineteenthNewRoundBtn) {
-    nineteenthNewRoundBtn.addEventListener("click", () => {
-        resetCurrentRound();
-    });
-}
-
-const viewSavedRoundsBtn = document.getElementById("viewSavedRoundsBtn");
-
-
-function showPerformanceChartsScreen() {
-    const savedRoundsScreen = document.getElementById("savedRoundsScreen");
-    const performanceChartsScreen = document.getElementById("performanceChartsScreen");
-    const savedRoundsListScreen = document.getElementById("savedRoundsListScreen");
-
-    if (savedRoundsScreen) savedRoundsScreen.classList.add("hidden");
-    if (savedRoundsListScreen) savedRoundsListScreen.classList.add("hidden");
-    if (performanceChartsScreen) performanceChartsScreen.classList.remove("hidden");
-
-    if (typeof renderPerformanceReview === "function") {
-        setTimeout(() => {
-            renderPerformanceReview();
-        }, 120);
+    if (nineteenthNewRoundBtn) {
+        nineteenthNewRoundBtn.addEventListener("click", () => {
+            resetCurrentRound();
+        });
     }
-}
 
-function showSavedRoundsListScreen() {
-    const savedRoundsScreen = document.getElementById("savedRoundsScreen");
-    const performanceChartsScreen = document.getElementById("performanceChartsScreen");
-    const savedRoundsListScreen = document.getElementById("savedRoundsListScreen");
+    const viewSavedRoundsBtn = document.getElementById("viewSavedRoundsBtn");
 
-    if (savedRoundsScreen) savedRoundsScreen.classList.add("hidden");
-    if (performanceChartsScreen) performanceChartsScreen.classList.add("hidden");
-    if (savedRoundsListScreen) savedRoundsListScreen.classList.remove("hidden");
-
-    if (typeof renderSavedRounds === "function") {
-        renderSavedRounds();
-    }
-}
-
-if (viewSavedRoundsBtn) {
-    viewSavedRoundsBtn.addEventListener("click", () => {
-        showSavedRoundsListScreen();
-    });
-}
-
-const savedRoundsBackBtn = document.getElementById("savedRoundsBackBtn");
-if (savedRoundsBackBtn) {
-    savedRoundsBackBtn.addEventListener("click", () => {
+    function showPerformanceChartsScreen() {
         const savedRoundsScreen = document.getElementById("savedRoundsScreen");
+        const performanceChartsScreen = document.getElementById("performanceChartsScreen");
+        const savedRoundsListScreen = document.getElementById("savedRoundsListScreen");
 
-        if (savedRoundsScreen) {
-            savedRoundsScreen.classList.add("hidden");
+        if (savedRoundsScreen) savedRoundsScreen.classList.add("hidden");
+        if (savedRoundsListScreen) savedRoundsListScreen.classList.add("hidden");
+        if (performanceChartsScreen) performanceChartsScreen.classList.remove("hidden");
+
+        if (typeof renderPerformanceReview === "function") {
+            setTimeout(() => {
+                renderPerformanceReview();
+            }, 120);
+        }
+    }
+
+    function showSavedRoundsListScreen() {
+        const savedRoundsScreen = document.getElementById("savedRoundsScreen");
+        const performanceChartsScreen = document.getElementById("performanceChartsScreen");
+        const savedRoundsListScreen = document.getElementById("savedRoundsListScreen");
+
+        if (savedRoundsScreen) savedRoundsScreen.classList.add("hidden");
+        if (performanceChartsScreen) performanceChartsScreen.classList.add("hidden");
+        if (savedRoundsListScreen) savedRoundsListScreen.classList.remove("hidden");
+
+        if (typeof renderSavedRounds === "function") {
+            renderSavedRounds();
+        }
+    }
+
+    if (viewSavedRoundsBtn) {
+    const openSavedRoundsFromWrapUp = e => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
         }
 
-        if (roundJustCompleted || postRoundMode) {
-            show19thHoleScreen();
-        } else {
-            showStatsScreen();
+        const savedRoundsScreen = document.getElementById("savedRoundsScreen");
+        const performanceChartsScreen = document.getElementById("performanceChartsScreen");
+        const savedRoundsListScreen = document.getElementById("savedRoundsListScreen");
+        const nineteenthHoleScreen = document.getElementById("nineteenthHoleScreen");
+        const roundDetailsScreen = document.getElementById("roundDetailsScreen");
+        const appContainer = document.getElementById("appContainer");
+
+        if (roundDetailsScreen) roundDetailsScreen.style.display = "none";
+        if (appContainer) appContainer.style.display = "none";
+        if (nineteenthHoleScreen) nineteenthHoleScreen.classList.add("hidden");
+        if (savedRoundsScreen) savedRoundsScreen.classList.add("hidden");
+        if (performanceChartsScreen) performanceChartsScreen.classList.add("hidden");
+        if (savedRoundsListScreen) savedRoundsListScreen.classList.remove("hidden");
+
+        if (typeof renderSavedRounds === "function") {
+            renderSavedRounds();
         }
 
         window.scrollTo(0, 0);
-    });
+    };
+
+    viewSavedRoundsBtn.addEventListener("click", openSavedRoundsFromWrapUp);
+    viewSavedRoundsBtn.addEventListener("touchend", openSavedRoundsFromWrapUp, { passive: false });
 }
 
+    const savedRoundsBackBtn = document.getElementById("savedRoundsBackBtn");
+    if (savedRoundsBackBtn) {
+        savedRoundsBackBtn.addEventListener("click", () => {
+            const savedRoundsScreen = document.getElementById("savedRoundsScreen");
 
-const openPerformanceChartsBtn = document.getElementById("openPerformanceChartsBtn");
-if (openPerformanceChartsBtn) {
-    openPerformanceChartsBtn.addEventListener("click", () => {
-        showPerformanceChartsScreen();
-    });
-}
+            if (savedRoundsScreen) {
+                savedRoundsScreen.classList.add("hidden");
+            }
 
-const openSavedRoundsListBtn = document.getElementById("openSavedRoundsListBtn");
-if (openSavedRoundsListBtn) {
-    openSavedRoundsListBtn.addEventListener("click", () => {
-        showSavedRoundsListScreen();
-    });
-}
+            if (roundJustCompleted || postRoundMode) {
+                show19thHoleScreen();
+            } else {
+                showStatsScreen();
+            }
 
-const performanceChartsBackBtn = document.getElementById("performanceChartsBackBtn");
-if (performanceChartsBackBtn) {
-    performanceChartsBackBtn.addEventListener("click", () => {
-        showSavedRoundsHub();
-    });
-}
+            window.scrollTo(0, 0);
+        });
+    }
 
-const savedRoundsListBackBtn = document.getElementById("savedRoundsListBackBtn");
-if (savedRoundsListBackBtn) {
-    savedRoundsListBackBtn.addEventListener("click", () => {
-        showSavedRoundsHub();
-    });
-}
+    const openPerformanceChartsBtn = document.getElementById("openPerformanceChartsBtn");
+    if (openPerformanceChartsBtn) {
+        openPerformanceChartsBtn.addEventListener("click", () => {
+            showPerformanceChartsScreen();
+        });
+    }
 
-const savedRoundsHubBackBtn = document.getElementById("savedRoundsHubBackBtn");
-if (savedRoundsHubBackBtn) {
-    savedRoundsHubBackBtn.addEventListener("click", () => {
-        const savedRoundsScreen = document.getElementById("savedRoundsScreen");
-        const nineteenthHoleScreen = document.getElementById("nineteenthHoleScreen");
+    const openSavedRoundsListBtn = document.getElementById("openSavedRoundsListBtn");
+    if (openSavedRoundsListBtn) {
+        openSavedRoundsListBtn.addEventListener("click", () => {
+            showSavedRoundsListScreen();
+        });
+    }
 
-        if (savedRoundsScreen) savedRoundsScreen.classList.add("hidden");
-        if (nineteenthHoleScreen) nineteenthHoleScreen.classList.remove("hidden");
-    });
-}
+    const performanceChartsBackBtn = document.getElementById("performanceChartsBackBtn");
+    if (performanceChartsBackBtn) {
+        performanceChartsBackBtn.addEventListener("click", () => {
+            showSavedRoundsHub();
+        });
+    }
+
+    const savedRoundsListBackBtn = document.getElementById("savedRoundsListBackBtn");
+    if (savedRoundsListBackBtn) {
+        savedRoundsListBackBtn.addEventListener("click", () => {
+            showSavedRoundsHub();
+        });
+    }
+
+    const savedRoundsHubBackBtn = document.getElementById("savedRoundsHubBackBtn");
+    if (savedRoundsHubBackBtn) {
+        savedRoundsHubBackBtn.addEventListener("click", () => {
+            const savedRoundsScreen = document.getElementById("savedRoundsScreen");
+
+            if (savedRoundsScreen) {
+                savedRoundsScreen.classList.add("hidden");
+            }
+
+            const savedHoleCount = holes.filter(h => h && h.saved).length;
+
+            if (savedHoleCount === 18 && (roundJustCompleted || postRoundMode)) {
+                show19thHoleScreen();
+            } else {
+                showStatsScreen();
+            }
+
+            window.scrollTo(0, 0);
+        });
+    }
 
     if (finalClosureBtn) {
         finalClosureBtn.addEventListener("click", () => {
@@ -2136,6 +2180,7 @@ if (savedRoundsHubBackBtn) {
         });
     }
 }
+
 
 
 // ===== Window Events =====

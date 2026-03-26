@@ -1359,7 +1359,7 @@ header h1 {
 .nineteenth-score-circle.double-bogey {
     background-color: rgb(49, 49, 49);
     border: 3px solid rgb(49, 49, 49);
-    color: rgb(47, 47, 47);
+    color: rgb(255, 255, 255);
 }
 
 .nineteenth-mini-stats {
