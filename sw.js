@@ -1,4 +1,4 @@
-const CACHE_NAME = "golf-stats-v8";
+const CACHE_NAME = "golf-stats-v9999";
 
 const BASE_PATH = self.location.pathname.replace(/\/sw\.js$/, "");
 
@@ -24,12 +24,14 @@ const CORE_ASSETS = [
     withBase("/images/Round-details-1.jpg"),
 
     // Golf backgrounds
-    withBase("/images/golf-shot1.jpg"),
-    withBase("/images/golf-shot1b.jpg"),
-    withBase("/images/golf-shot2.jpg"),
-    withBase("/images/golf-shot3.jpg"),
-    withBase("/images/golf-shot4.jpg"),
-    withBase("/images/golf-shot10.jpg"),
+// Golf backgrounds
+withBase("/images/golf-shot1.jpg"),
+withBase("/images/golf-shot1b.jpg"),
+withBase("/images/golf-shot2.jpg"),
+withBase("/images/golf-shot3.jpg"),
+withBase("/images/golf-shot4.jpg"),
+withBase("/images/golf-shot6.jpg"),
+withBase("/images/golf-shot10.jpg"),
 
     // Other app images you’ve used
     withBase("/images/CartPath.png"),
