@@ -1,4 +1,4 @@
-const CACHE_NAME = "golf-stats-v7";
+const CACHE_NAME = "golf-stats-v8";
 
 const BASE_PATH = self.location.pathname.replace(/\/sw\.js$/, "");
 
@@ -16,31 +16,30 @@ const CORE_ASSETS = [
     withBase("/js/storage.js"),
     withBase("/js/app.js"),
 
-    // Splash / header / core visuals
+    // Splash / header / key images
     withBase("/images/splash-1.jpg"),
     withBase("/images/splash-2.png"),
     withBase("/images/Stracker-header-1.png"),
     withBase("/images/Stracker-header-2.png"),
+    withBase("/images/Round-details-1.jpg"),
 
-    // Round background images used during play
+    // Golf backgrounds
     withBase("/images/golf-shot1.jpg"),
     withBase("/images/golf-shot1b.jpg"),
     withBase("/images/golf-shot2.jpg"),
     withBase("/images/golf-shot3.jpg"),
     withBase("/images/golf-shot4.jpg"),
+    withBase("/images/golf-shot10.jpg"),
 
-    // PWA / app images you are likely to need
+    // Other app images you’ve used
     withBase("/images/CartPath.png"),
     withBase("/images/PGA-mrkr.jpg")
 ];
 
 self.addEventListener("install", event => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then(async cache => {
-            await cache.addAll(CORE_ASSETS);
-        })
+        caches.open(CACHE_NAME).then(cache => cache.addAll(CORE_ASSETS))
     );
-
     self.skipWaiting();
 });
 
@@ -62,19 +61,14 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
     const request = event.request;
 
-    // Only handle GET requests
-    if (request.method !== "GET") {
-        return;
-    }
+    if (request.method !== "GET") return;
 
     const url = new URL(request.url);
 
-    // Only handle same-origin requests
-    if (url.origin !== self.location.origin) {
-        return;
-    }
+    // only same-origin requests
+    if (url.origin !== self.location.origin) return;
 
-    // For page navigation, prefer cache fallback to index
+    // page navigation fallback
     if (request.mode === "navigate") {
         event.respondWith(
             fetch(request)
@@ -84,36 +78,35 @@ self.addEventListener("fetch", event => {
                     return response;
                 })
                 .catch(async () => {
-                    const cachedPage =
+                    return (
                         (await caches.match(request)) ||
-                        (await caches.match(withBase("/index.html")));
-                    return cachedPage;
+                        (await caches.match(withBase("/index.html")))
+                    );
                 })
         );
         return;
     }
 
-    // Cache-first for app assets
+    // cache-first for assets
     event.respondWith(
-        caches.match(request).then(cachedResponse => {
-            if (cachedResponse) {
-                return cachedResponse;
-            }
+        caches.match(request).then(cached => {
+            if (cached) return cached;
 
-            return fetch(request).then(networkResponse => {
-                if (
-                    networkResponse &&
-                    networkResponse.status === 200 &&
-                    request.url.startsWith(self.location.origin)
-                ) {
-                    const responseToCache = networkResponse.clone();
-                    caches.open(CACHE_NAME).then(cache => {
-                        cache.put(request, responseToCache);
-                    });
-                }
-
-                return networkResponse;
-            });
+            return fetch(request)
+                .then(response => {
+                    if (response && response.status === 200) {
+                        const copy = response.clone();
+                        caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+                    }
+                    return response;
+                })
+                .catch(async () => {
+                    // final fallback for missed app-shell requests
+                    if (request.destination === "document") {
+                        return await caches.match(withBase("/index.html"));
+                    }
+                    return Response.error();
+                });
         })
     );
 });
