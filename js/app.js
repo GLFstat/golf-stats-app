@@ -1019,8 +1019,9 @@ function tryAutoSaveAfterCorrection() {
         return;
     }
 
-    autoSaveInProgress = true;
-    completeHoleSave();
+    // Validation is now satisfied, but do NOT auto-save.
+    // Let the user tap Save Hole again when ready.
+    autoSaveInProgress = false;
 }
 
 // ===== Summary =====
@@ -1044,14 +1045,21 @@ function getScoreCircleClass(score, par) {
     return circleClass;
 }
 
-function viewSummary(e, returnTarget = "app") {
-    if (e) e.preventDefault();
 
+function showSummaryForRound(roundHoles, highlightedHole = null, returnTarget = "app", courseName = "") {
     summaryReturnTarget = returnTarget;
 
-    const summaryModal = document.getElementById("summaryModal");
-    const tbody = document.querySelector("#summaryTable tbody");
-    if (!summaryModal || !tbody) return;
+const summaryModal = document.getElementById("summaryModal");
+const summaryCourseNameEl = document.getElementById("summaryCourseName");
+const tbody = document.querySelector("#summaryTable tbody");
+
+if (!summaryModal || !tbody) return;
+
+if (summaryCourseNameEl) {
+    summaryCourseNameEl.textContent = courseName || "";
+}
+
+    const safeHoles = Array.isArray(roundHoles) ? roundHoles : [];
 
     tbody.innerHTML = "";
 
@@ -1066,14 +1074,14 @@ function viewSummary(e, returnTarget = "app") {
 
     for (let i = 0; i < 18; i++) {
         const actualHoleNumber = i + 1;
-        const h = holes[i];
+        const h = safeHoles[i];
         const isSaved = !!(h && h.saved);
 
         const holeData = isSaved
             ? h
             : { fir: false, gir: false, putts: "", updown: false, sand: false, penalty: "", score: "", par: null };
 
-        const highlight = actualHoleNumber === currentHole ? 'style="background:#e0ffe0"' : "";
+        const highlight = highlightedHole === actualHoleNumber ? 'style="background:#e0ffe0"' : "";
         const scoreText = formatRelativeScore(holeData.score, holeData.par);
         const circleClass = getScoreCircleClass(holeData.score, holeData.par);
 
@@ -1165,14 +1173,57 @@ function viewSummary(e, returnTarget = "app") {
         }
     }
 
+    if (summaryCourseNameEl) {
+    if (returnTarget === "savedRoundsList") {
+        // From saved round
+        const rounds = getCompletedRounds();
+        const match = rounds.find(r => r.holes === roundHoles);
+        summaryCourseNameEl.textContent = match?.details?.courseName || "";
+    } else {
+        // Current round
+        summaryCourseNameEl.textContent = getFieldValue("courseName") || "";
+    }
+}
+
     summaryModal.style.display = "flex";
 }
+
+
+function viewSummary(e, returnTarget = "app") {
+    if (e) e.preventDefault();
+    showSummaryForRound(
+        holes,
+        currentHole,
+        returnTarget,
+        getFieldValue("courseName")
+    );
+}
+
 
 function restoreAfterSummaryExit() {
     const roundCompleteModal = document.getElementById("roundCompleteModal");
 
     if (summaryReturnTarget === "roundComplete") {
         if (roundCompleteModal) roundCompleteModal.style.display = "flex";
+        return;
+    }
+
+        if (summaryReturnTarget === "savedRoundsList") {
+        const roundDetailsScreen = document.getElementById("roundDetailsScreen");
+        const appContainer = document.getElementById("appContainer");
+        const nineteenthHoleScreen = document.getElementById("nineteenthHoleScreen");
+        const savedRoundsScreen = document.getElementById("savedRoundsScreen");
+        const performanceChartsScreen = document.getElementById("performanceChartsScreen");
+        const savedRoundsListScreen = document.getElementById("savedRoundsListScreen");
+
+        if (roundDetailsScreen) roundDetailsScreen.style.display = "none";
+        if (appContainer) appContainer.style.display = "none";
+        if (nineteenthHoleScreen) nineteenthHoleScreen.classList.add("hidden");
+        if (savedRoundsScreen) savedRoundsScreen.classList.add("hidden");
+        if (performanceChartsScreen) performanceChartsScreen.classList.add("hidden");
+        if (savedRoundsListScreen) savedRoundsListScreen.classList.remove("hidden");
+
+        window.scrollTo(0, 0);
         return;
     }
 
@@ -1236,9 +1287,21 @@ function getMissingTeeDetails() {
 
     const missing = [];
 
-    if (slopeValue === "") missing.push("Slope");
-    if (ratingValue === "") missing.push("Rating");
-    if (yardageValue === "") missing.push("Yardage");
+    // Slope: require at least 2 digits, allow 2 or 3
+    if (!/^\d{2,3}$/.test(slopeValue)) {
+        missing.push("Slope");
+    }
+
+    // Rating: require at least 2 digits, allow optional decimal
+    // Examples accepted: 69, 69.0, 71.4
+    if (!/^\d{2}(\.\d)?$/.test(ratingValue)) {
+        missing.push("Rating");
+    }
+
+    // Yardage: require exactly 4 digits
+    if (!/^\d{4}$/.test(yardageValue)) {
+        missing.push("Yardage");
+    }
 
     return missing;
 }
@@ -1953,73 +2016,91 @@ if (roundCompleteCloseBtn) {
 }
 
 window.renderSavedRounds = function () {
-        const savedRoundsList = document.getElementById("savedRoundsList");
-        if (!savedRoundsList) return;
+    const savedRoundsList = document.getElementById("savedRoundsList");
+    if (!savedRoundsList) return;
 
-        const rounds = getCompletedRounds();
-        savedRoundsList.innerHTML = "";
+    const rounds = getCompletedRounds();
+    savedRoundsList.innerHTML = "";
 
-        if (!rounds || !rounds.length) {
-            savedRoundsList.innerHTML = "<p style='color:white;'>No saved rounds yet.</p>";
-            return;
+    if (!rounds || !rounds.length) {
+        savedRoundsList.innerHTML = "<p style='color:white;'>No saved rounds yet.</p>";
+        return;
+    }
+
+    rounds.forEach(round => {
+        const item = document.createElement("div");
+        item.className = "saved-round-item";
+        item.style.cursor = "pointer";
+
+        const dateText = round.details?.roundDate
+            ? round.details.roundDate
+            : new Date(round.date).toLocaleDateString();
+
+        const courseName = round.details?.courseName || "Unknown Course";
+
+        let totalScore = "";
+        let vsParText = "";
+
+        if (round.summary) {
+            totalScore = round.summary.totalScore ?? "";
+            const vsPar = Number(round.summary.vsPar ?? 0);
+
+            if (vsPar === 0) {
+                vsParText = "E";
+            } else {
+                vsParText = `${vsPar > 0 ? "+" : ""}${vsPar}`;
+            }
+        } else {
+            const savedHoles = Array.isArray(round.holes)
+                ? round.holes.filter(h => h && h.saved)
+                : [];
+            const total = savedHoles.reduce((sum, h) => sum + Number(h.score || 0), 0);
+            const coursePar = Number(round.details?.coursePar || 0);
+            const vsPar = coursePar ? (total - coursePar) : 0;
+            totalScore = total;
+
+            if (vsPar === 0) {
+                vsParText = "E";
+            } else {
+                vsParText = `${vsPar > 0 ? "+" : ""}${vsPar}`;
+            }
         }
 
-        rounds.forEach(round => {
-            const item = document.createElement("div");
-            item.className = "saved-round-item";
+        let resultClass = "";
+        if (vsParText === "E") {
+            resultClass = "score-even";
+        } else if (vsParText.startsWith("+")) {
+            resultClass = "score-over";
+        } else {
+            resultClass = "score-under";
+        }
 
-            const dateText = round.details?.roundDate
-                ? round.details.roundDate
-                : new Date(round.date).toLocaleDateString();
+        item.innerHTML = `
+            <div><strong>${dateText}</strong></div>
+            <div>${courseName}</div>
+            <div class="${resultClass}">Score: ${totalScore} (${vsParText})</div>
+        `;
 
-            const courseName = round.details?.courseName || "Unknown Course";
-
-            let totalScore = "";
-            let vsParText = "";
-
-            if (round.summary) {
-                totalScore = round.summary.totalScore ?? "";
-                const vsPar = Number(round.summary.vsPar ?? 0);
-
-                if (vsPar === 0) {
-                    vsParText = "E";
-                } else {
-                    vsParText = `${vsPar > 0 ? "+" : ""}${vsPar}`;
-                }
-            } else {
-                const savedHoles = Array.isArray(round.holes)
-                    ? round.holes.filter(h => h && h.saved)
-                    : [];
-                const total = savedHoles.reduce((sum, h) => sum + Number(h.score || 0), 0);
-                const coursePar = Number(round.details?.coursePar || 0);
-                const vsPar = coursePar ? (total - coursePar) : 0;
-                totalScore = total;
-
-                if (vsPar === 0) {
-                    vsParText = "E";
-                } else {
-                    vsParText = `${vsPar > 0 ? "+" : ""}${vsPar}`;
-                }
-            }
-
-            let resultClass = "";
-            if (vsParText === "E") {
-                resultClass = "score-even";
-            } else if (vsParText.startsWith("+")) {
-                resultClass = "score-over";
-            } else {
-                resultClass = "score-under";
-            }
-
-            item.innerHTML = `
-                <div><strong>${dateText}</strong></div>
-                <div>${courseName}</div>
-                <div class="${resultClass}">Score: ${totalScore} (${vsParText})</div>
-            `;
-
-            savedRoundsList.appendChild(item);
-        });
+const openSavedRoundSummary = e => {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
     }
+
+    showSummaryForRound(
+        round.holes || [],
+        null,
+        "savedRoundsList",
+        ""
+    );
+};
+
+        item.addEventListener("click", openSavedRoundSummary);
+        item.addEventListener("touchend", openSavedRoundSummary, { passive: false });
+
+        savedRoundsList.appendChild(item);
+    });
+}
 
     const nineteenthSummaryBtn = document.getElementById("nineteenthSummaryBtn");
     if (nineteenthSummaryBtn) {
@@ -2096,13 +2177,11 @@ window.renderSavedRounds = function () {
         if (roundDetailsScreen) roundDetailsScreen.style.display = "none";
         if (appContainer) appContainer.style.display = "none";
         if (nineteenthHoleScreen) nineteenthHoleScreen.classList.add("hidden");
-        if (savedRoundsScreen) savedRoundsScreen.classList.add("hidden");
         if (performanceChartsScreen) performanceChartsScreen.classList.add("hidden");
-        if (savedRoundsListScreen) savedRoundsListScreen.classList.remove("hidden");
 
-        if (typeof renderSavedRounds === "function") {
-            renderSavedRounds();
-        }
+        // 🔥 KEY CHANGE — go to HUB instead of list
+        if (savedRoundsListScreen) savedRoundsListScreen.classList.add("hidden");
+        if (savedRoundsScreen) savedRoundsScreen.classList.remove("hidden");
 
         window.scrollTo(0, 0);
     };
