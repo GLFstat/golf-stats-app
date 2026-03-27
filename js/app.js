@@ -1236,9 +1236,9 @@ function getMissingTeeDetails() {
 
     const missing = [];
 
-    if (!isValidTeeSlope(slopeValue)) missing.push("Slope");
-    if (!isValidTeeRating(ratingValue)) missing.push("Rating");
-    if (!isValidTeeYardage(yardageValue)) missing.push("Yardage");
+    if (slopeValue === "") missing.push("Slope");
+    if (ratingValue === "") missing.push("Rating");
+    if (yardageValue === "") missing.push("Yardage");
 
     return missing;
 }
@@ -1938,14 +1938,19 @@ if (deleteAndStartNewBtn) {
     }
 
     const roundCompleteCloseBtn = document.getElementById("roundCompleteCloseBtn");
-    if (roundCompleteCloseBtn) {
-        roundCompleteCloseBtn.addEventListener("click", () => {
-            postRoundMode = false;
-            postRoundReturnTarget = "nineteenth";
-            persistActiveRound();
-            show19thHoleScreen();
-        });
-    }
+if (roundCompleteCloseBtn) {
+    roundCompleteCloseBtn.addEventListener("click", () => {
+        postRoundMode = false;
+        postRoundReturnTarget = "nineteenth";
+        persistActiveRound();
+
+        if (typeof finalizeCompletedRoundIfNeeded === "function") {
+            finalizeCompletedRoundIfNeeded();
+        }
+
+        show19thHoleScreen();
+    });
+}
 
 window.renderSavedRounds = function () {
         const savedRoundsList = document.getElementById("savedRoundsList");
