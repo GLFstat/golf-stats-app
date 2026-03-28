@@ -740,8 +740,11 @@ function clearInputs() {
 }
 
 function updateNavButtons() {
-    const atFirstHole = currentHoleIndex === 0;
-    const atLastHole = currentHoleIndex === playOrder.length - 1;
+    // 🔒 Safety guard — prevents crash if playOrder isn't ready
+    if (!playOrder || playOrder.length === 0) return;
+
+    const atFirstHole = currentHoleIndex <= 0;
+    const atLastHole = currentHoleIndex >= playOrder.length - 1;
 
     if (prevHoleBtn) {
         prevHoleBtn.disabled = atFirstHole;
@@ -2044,36 +2047,24 @@ window.renderSavedRounds = function () {
         if (round.summary) {
             totalScore = round.summary.totalScore ?? "";
             const vsPar = Number(round.summary.vsPar ?? 0);
-
-            if (vsPar === 0) {
-                vsParText = "E";
-            } else {
-                vsParText = `${vsPar > 0 ? "+" : ""}${vsPar}`;
-            }
+            vsParText = vsPar === 0 ? "E" : `${vsPar > 0 ? "+" : ""}${vsPar}`;
         } else {
             const savedHoles = Array.isArray(round.holes)
                 ? round.holes.filter(h => h && h.saved)
                 : [];
+
             const total = savedHoles.reduce((sum, h) => sum + Number(h.score || 0), 0);
             const coursePar = Number(round.details?.coursePar || 0);
             const vsPar = coursePar ? (total - coursePar) : 0;
-            totalScore = total;
 
-            if (vsPar === 0) {
-                vsParText = "E";
-            } else {
-                vsParText = `${vsPar > 0 ? "+" : ""}${vsPar}`;
-            }
+            totalScore = total;
+            vsParText = vsPar === 0 ? "E" : `${vsPar > 0 ? "+" : ""}${vsPar}`;
         }
 
         let resultClass = "";
-        if (vsParText === "E") {
-            resultClass = "score-even";
-        } else if (vsParText.startsWith("+")) {
-            resultClass = "score-over";
-        } else {
-            resultClass = "score-under";
-        }
+        if (vsParText === "E") resultClass = "score-even";
+        else if (vsParText.startsWith("+")) resultClass = "score-over";
+        else resultClass = "score-under";
 
         item.innerHTML = `
             <div><strong>${dateText}</strong></div>
@@ -2081,26 +2072,21 @@ window.renderSavedRounds = function () {
             <div class="${resultClass}">Score: ${totalScore} (${vsParText})</div>
         `;
 
-const openSavedRoundSummary = e => {
-    if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
+        item.addEventListener("click", e => {
+            e.preventDefault();
+            e.stopPropagation();
 
-    showSummaryForRound(
-        round.holes || [],
-        null,
-        "savedRoundsList",
-        ""
-    );
-};
-
-        item.addEventListener("click", openSavedRoundSummary);
-        item.addEventListener("touchend", openSavedRoundSummary, { passive: false });
+            showSummaryForRound(
+                round.holes || [],
+                null,
+                "savedRoundsList",
+                ""
+            );
+        });
 
         savedRoundsList.appendChild(item);
     });
-}
+};
 
     const nineteenthSummaryBtn = document.getElementById("nineteenthSummaryBtn");
     if (nineteenthSummaryBtn) {

@@ -409,19 +409,24 @@ header h1 {
 
 /* ================= Action Buttons ================= */
 .actions {
-    margin-top: 5px;
+    margin-top: 8px;
     display: flex;
     flex-direction: column;
-    gap: 1px;
+    gap: 10px;
     align-items: center;
 }
 
+.save-hole-row {
+    width: 92%;
+    max-width: 430px;
+    display: grid;
+    grid-template-columns: 64px 1fr 64px;
+    gap: 10px;
+    align-items: stretch;
+}
+
 .actions button {
-    margin-top: 5px;
-    padding: 4px 10px;
-    font-size: 18px;
-    width: 75%;
-    border-radius: 10px;
+    border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.4);
     color: white;
     cursor: pointer;
@@ -437,6 +442,21 @@ header h1 {
     white-space: nowrap;
 }
 
+#saveHole {
+    min-height: 68px;
+    padding: 0 18px;
+    font-size: 26px;
+    font-weight: 700;
+    width: 100%;
+}
+
+#seeStats {
+    margin-top: 2px;
+    padding: 10px 16px;
+    font-size: 18px;
+    width: 75%;
+}
+
 #saveHole.inactive {
     background-color: #aaa;
     color: #666;
@@ -445,18 +465,12 @@ header h1 {
 }
 
 /* ================= Navigation Buttons ================= */
-.nav-row {
-    display: grid;
-    grid-template-columns: 15% 30% 15%;
-    gap: 5%;
-    justify-content: center;
-    margin-top: 10px;
-}
-
 .nav-btn {
-    padding: 14px 0;
-    font-size: 18px;
-    border-radius: 10px;
+    min-height: 68px;
+    padding: 0;
+    font-size: 28px;
+    font-weight: 700;
+    border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.4);
     color: white;
     cursor: pointer;
@@ -471,8 +485,10 @@ header h1 {
 }
 
 .arrow-btn {
-    font-size: 32px;
-    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
 }
 
 .actions button:active,
@@ -490,6 +506,10 @@ header h1 {
     opacity: 0.65;
     pointer-events: none;
 }
+
+
+
+
 
 /* ================= Popup Overlay ================= */
 .popup-overlay {
@@ -1687,6 +1707,11 @@ header h1 {
 .saved-round-item div {
     line-height: 1.4;
 }
+
+
+
+
+
 
 #savedRoundsBackBtn {
     margin: 10px auto 0 auto;
