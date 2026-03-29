@@ -644,7 +644,7 @@ header h1 {
 
 
 .help-popup-box {
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.70);
     backdrop-filter: blur(4px);
     border-radius: 12px;
     padding: 18px 16px 16px;
@@ -2180,4 +2180,9 @@ header h1 {
     z-index: 999999;
     pointer-events: none;
     font-family: Arial, sans-serif;
+}
+
+#devJumpToSavedRounds {
+    left: 20px !important;
+    right: auto !important;
 }
