@@ -142,9 +142,10 @@
 <!-- Main Stats Input / Home Page -->
 <div id="appContainer">
   <header>
-    <h1></h1>
-    <div id="speakerToggle">🔊</div>
-  </header>
+  <h1></h1>
+  <button id="statsHelpBtn" class="help-btn" type="button">?</button>
+  
+</header>
 
   <div class="hole-nav">
     <div class="hole-par-section">
@@ -210,21 +211,67 @@
     </div>
   </div>
 
-  <div class="actions">
-    <button id="saveHole" type="button">Save Hole</button>
-    <button id="seeStats" type="button">View Stats Summary</button>
-  </div>
 
-  <div class="nav-row">
+
+
+
+
+
+<div class="actions">
+  <div class="save-hole-row">
     <button id="prevHole" class="nav-btn arrow-btn" type="button">◀</button>
-    <button id="nextHole" class="nav-btn main-btn" type="button">Next Hole</button>
+    <button id="saveHole" type="button">Save Hole</button>
     <button id="forwardHole" class="nav-btn arrow-btn" type="button">▶</button>
   </div>
+
+  <button id="seeStats" type="button">View Stats Summary</button>
+</div>
+
+
+
+
+
+
+
 
   <div class="return-row">
     <button id="returnToDetails" type="button">← Return to Round Details</button>
   </div>
 </div>
+
+<!-- Stats Help Popup -->
+<div id="statsHelpPopup" class="popup-overlay">
+  <div class="help-popup-box">
+    <div class="help-popup-title">Stats Screen Help</div>
+
+    <div class="help-popup-text">
+      <p><strong>Select the hole par</strong> first.</p>
+
+      <p>
+        Enter the stats for that hole, including
+        <strong>Putts</strong> and <strong>Score</strong>.
+      </p>
+
+      <p>
+        Check <strong>FIR</strong>, <strong>GIR</strong>,
+        <strong>U&amp;D</strong>, and <strong>SndSv</strong>
+        only if they apply to that hole.
+      </p>
+
+      <p>
+        Tap <strong>Save Hole</strong> when finished.
+        The app will automatically move to the next hole.
+      </p>
+
+      <p>
+        Use the left and right arrows only if you need to view another hole screen.
+      </p>
+    </div>
+
+    <button id="statsHelpCloseBtn" type="button">Close</button>
+  </div>
+</div>
+
 
 <!-- Save Confirmation Popup -->
 <div id="saveConfirmPopup" class="popup-overlay">
@@ -273,6 +320,10 @@
   </div>
 </div>
 
+
+<!-- Round Details Help Popup -->
+
+
 <!-- 19th Hole Screen -->
 <div id="nineteenthHoleScreen" class="screen hidden">
   <div class="summary-box nineteenth-box" style="text-align:center;">
@@ -313,7 +364,7 @@
 
       <div class="actions">
         <button id="nineteenthSummaryBtn" type="button">View Summary</button>
-        <button id="viewSavedRoundsBtn" type="button">View Saved Rounds</button>
+        <button id="viewSavedRoundsBtn" type="button">Go to Saved Rounds</button>
         <button id="nineteenthDetailsBtn" type="button">Finish Round Details</button>
         <button id="nineteenthNewRoundBtn" type="button">Start New Round</button>
       </div>

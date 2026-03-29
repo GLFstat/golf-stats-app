@@ -1673,6 +1673,24 @@ window.showSavedRoundsHub = function () {
 
 
 function wireStaticEventListeners() {
+        const statsHelpBtn = document.getElementById("statsHelpBtn");
+        const statsHelpPopup = document.getElementById("statsHelpPopup");
+        const statsHelpCloseBtn = document.getElementById("statsHelpCloseBtn");
+
+    if (statsHelpBtn && statsHelpPopup) {
+        statsHelpBtn.addEventListener("click", () => {
+            statsHelpPopup.style.display = "flex";
+        });
+    }
+
+    if (statsHelpCloseBtn && statsHelpPopup) {
+        statsHelpCloseBtn.addEventListener("click", () => {
+            statsHelpPopup.style.display = "none";
+        });
+    }
+
+
+
     const demoRoundBtn = document.getElementById("demoRoundBtn");
     if (demoRoundBtn) {
         demoRoundBtn.addEventListener("click", function () {
