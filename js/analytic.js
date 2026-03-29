@@ -63,6 +63,7 @@ function getAnalyticsRounds() {
 
 function renderPerformanceMetrics() {
     const rounds = getAnalyticsRounds();
+    const allRounds = getCompletedRounds ? getCompletedRounds() : JSON.parse(localStorage.getItem("golfStatsCompletedRounds") || "[]");
 
     const avgScoreEl = document.getElementById("avgScoreValue");
     const avgVsParEl = document.getElementById("avgVsParValue");
@@ -71,13 +72,13 @@ function renderPerformanceMetrics() {
 
     if (!avgScoreEl || !avgVsParEl || !avgPuttsEl || !avgUpDownEl) return;
 
-    if (!rounds.length) {
-        avgScoreEl.textContent = "--";
-        avgVsParEl.textContent = "--";
-        avgPuttsEl.textContent = "--";
-        avgUpDownEl.textContent = "--";
-        return;
-    }
+if (!allRounds.length) {
+    avgScoreEl.textContent = "--";
+    avgVsParEl.textContent = "--";
+    avgPuttsEl.textContent = "--";
+    avgUpDownEl.textContent = "--";
+    return;
+}
 
     const totalScores = rounds.reduce((sum, round) => sum + getRoundTotalFromRound(round), 0);
     const totalVsPar = rounds.reduce((sum, round) => sum + getRoundVsParFromRound(round), 0);
@@ -263,21 +264,38 @@ function renderScoreYardageChart() {
         ctx.fill();
     });
 
+
+
+
+    
+
     // special message for one point only
-    if (points.length === 1) {
-        const p = points[0];
-        const x = xPos(p.yardage);
-        const y = yPos(p.score);
+// special message for one point only
+if (points.length === 1) {
+    const p = points[0];
+    const x = xPos(p.yardage);
+    const y = yPos(p.score);
 
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "13px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(`Only 1 saved round so far`, cssWidth / 2, cssHeight - 34);
-        ctx.fillText(`Add 1 more round to show a trend line`, cssWidth / 2, cssHeight - 16);
+    const allRounds = getCompletedRounds ? getCompletedRounds() : [];
+    const savedRoundCount = Array.isArray(allRounds) ? allRounds.length : 0;
+    const roundsNeeded = Math.max(0, 2 - savedRoundCount);
+    const roundLabel = savedRoundCount === 1 ? "round" : "rounds";
 
-        ctx.textAlign = "left";
-        ctx.fillText(`Score ${p.score} • ${p.yardage} yds`, x + 10, y - 10);
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "13px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(`Only ${savedRoundCount} saved ${roundLabel} so far`, cssWidth / 2, cssHeight - 34);
+
+    if (roundsNeeded > 0) {
+        const neededLabel = roundsNeeded === 1 ? "round" : "rounds";
+        ctx.fillText(`Add ${roundsNeeded} more ${neededLabel} to show a trend line`, cssWidth / 2, cssHeight - 16);
+    } else {
+        ctx.fillText(`More round details may be needed for charting`, cssWidth / 2, cssHeight - 16);
     }
+
+    ctx.textAlign = "left";
+    ctx.fillText(`Score ${p.score} • ${p.yardage} yds`, x + 10, y - 10);
+}
 
     // x labels
     ctx.fillStyle = "#cccccc";
