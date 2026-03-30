@@ -615,7 +615,7 @@ z-index: 2147483647;
 width: 20px;
 height: 20px;
 padding: 0;
-background: #ff7a1a;
+background: #959595;
 color: transparent;
 border: none;
 border-radius: 0;
@@ -638,7 +638,7 @@ z-index: 2147483647;
 width: 20px;
 height: 20px;
 padding: 0;
-background: #ff7a1a;
+background: #949494;
 color: transparent;
 border: none;
 border-radius: 0;
@@ -665,11 +665,31 @@ DEV: Clubhouse
     <div class="actions clubhouse-actions">
       <button id="clubhouseSummaryBtn" type="button" onclick="openClubhouseSummary()">View Summary</button>
       <button id="clubhouseNewRoundBtn" type="button" onclick="startNewRoundFromClubhouse()">Start New Round</button>
-      <button id="clubhouseCloseBtn" type="button">Done</button>
+      <button id="clubhouseCloseBtn" type="button" onclick="showClubhouseDoneScreen()">Done</button>
     </div>
 
   </div>
 </div>
+
+
+<!-- ===== CLOSING Clubhouse Goodbye) ===== -->
+<div id="clubhouseDoneScreen" class="hidden">
+  <div class="clubhouse-done-inner">
+    <img
+      id="clubhouseDoneLogo"
+      src="images/Stracker-header-2.png"
+      alt="Stracker"
+    >
+
+    <button id="clubhouseDoneStartBtn" type="button" onclick="startNewRoundFromClubhouseDone()">
+      Tap Here to Start a New Round
+    </button>
+  </div>
+</div>
+
+
+
+
 
 <script src="js/state.js"></script>
 <script src="js/storage.js"></script>

@@ -70,3 +70,77 @@
     font-size: 17px;
     font-weight: 700;
 }
+
+
+#clubhouseDoneScreen {
+    position: fixed;
+    inset: 0;
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.58)),
+        url('images/clubhouse.png') center/cover no-repeat;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 700;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+}
+
+#clubhouseDoneScreen.show {
+    display: flex;
+    opacity: 1;
+}
+
+.clubhouse-done-inner {
+    width: 92%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 26px;
+    text-align: center;
+}
+
+#clubhouseDoneLogo {
+    width: 94%;
+    max-width: 384px;
+    transform: scale(0.82);
+    opacity: 0;
+}
+
+#clubhouseDoneScreen.show #clubhouseDoneLogo {
+    animation: clubhouseLogoZoom 4.0s ease forwards;
+}
+
+@keyframes clubhouseLogoZoom {
+    from {
+        transform: scale(0.82);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+
+#clubhouseDoneStartBtn {
+    width: 72%;
+    min-height: 60px;
+    padding: 14px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, .35);
+    background: rgba(255, 255, 255, 0.14);
+    opacity: 0;
+    transition: opacity 2s ease;
+    backdrop-filter: blur(4px);
+    color: white;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.14),
+        0 6px 18px rgba(0, 0, 0, 0.35);
+    
+}

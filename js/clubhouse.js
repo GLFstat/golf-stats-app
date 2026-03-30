@@ -17,93 +17,69 @@ window.showClubhouseScreen = function () {
 
     const rounds = JSON.parse(localStorage.getItem("golfStatsCompletedRounds") || "[]");
     const lastRound = rounds[rounds.length - 1];
-
-    if (!lastRound) return;
-
     const msgEl = document.getElementById("clubhouseMessage");
-if (!msgEl || !lastRound) return;
 
-const score = lastRound.summary?.totalScore ?? "--";
-const vsPar = lastRound.summary?.vsPar ?? 0;
-const fir = lastRound.summary?.firPct ?? "--";
-const gir = lastRound.summary?.girPct ?? "--";
-const putts = lastRound.summary?.totalPutts ?? "--";
+    if (!msgEl || !lastRound) return;
 
+    const holes = Array.isArray(lastRound.holes)
+        ? lastRound.holes.filter(h => h && h.saved)
+        : [];
 
-// simple tone logic (safe)
-let opener = "Nice work out there!";
-if (vsPar < 0) opener = "Excellent round today.";
-if (vsPar > 5) opener = "Good effort today — keep building.";
+    const totalHoles = holes.length;
 
-msgEl.innerHTML = `
+    const firOpportunities = holes.filter(h => Number(h.par) >= 4).length;
+    const firMade = holes.filter(h => Number(h.par) >= 4 && h.fir).length;
+    const fir = firOpportunities ? Math.round((firMade / firOpportunities) * 100) : "--";
+
+    const girMade = holes.filter(h => h.gir).length;
+    const gir = totalHoles ? Math.round((girMade / totalHoles) * 100) : "--";
+
+    const putts = totalHoles
+        ? holes.reduce((sum, h) => sum + Number(h.putts || 0), 0)
+        : "--";
+
+    const score = totalHoles
+        ? holes.reduce((sum, h) => sum + Number(h.score || 0), 0)
+        : "--";
+
+    const coursePar = Number(lastRound.details?.coursePar || 0);
+    const vsPar = coursePar && score !== "--" ? score - coursePar : 0;
+
+    let opener = "Nice work out there!";
+    if (vsPar < 0) opener = "Excellent round today.";
+    if (vsPar > 5) opener = "Good effort today — keep building.";
+
+    msgEl.innerHTML = `
 <p class="clubhouse-center"><strong>${opener}</strong></p>
 
 <p>
-Your <strong>${lastRound.details?.courseName || "this course"}</strong> round shows:
+Your round at <strong>${lastRound.details?.courseName || "this course"}</strong> shows:
 </p>
 
 <p>
-You hit <strong>${lastRound.summary?.firPct ?? "--"}%</strong> of your fairways <br>and 
-<strong>${lastRound.summary?.girPct ?? "--"}%</strong> of your greens in regulation.
+You found <strong>${fir}%</strong> of your fairways <br>and
+<strong>${gir}%</strong> of your greens in regulation.
 </p>
 
 <p>
-You finished with <strong>${lastRound.summary?.totalPutts ?? "--"}</strong> putts and <br>a total score of 
-<strong>${lastRound.summary?.totalScore ?? "--"}</strong>.
+You took <strong>${putts}</strong> putts on your way to <br>a score of
+<strong>${score}</strong>. 
 </p>
 
 <p class="clubhouse-center">
-<strong>Keep working, stay consistent, <br>keep the momentum going, and <br>we'll see you on the next round!</strong>
+<strong>Keep working, stay consistent, keep the momentum going, and we'll see you on the next round!</strong>
 </p>
 `;
-
-    const courseNameEl = document.getElementById("clubhouseCourseName");
-    const scoreEl = document.getElementById("clubhouseScore");
-    const firEl = document.getElementById("clubhouseFIR");
-    const girEl = document.getElementById("clubhouseGIR");
-    const puttsEl = document.getElementById("clubhousePutts");
-
-    if (courseNameEl) {
-        courseNameEl.textContent = lastRound.details?.courseName || "Clubhouse";
-    }
-
-    if (scoreEl) {
-        scoreEl.textContent = lastRound.summary?.totalScore ?? "--";
-    }
-
-    if (firEl) {
-        firEl.textContent = lastRound.summary?.firPct ? `${lastRound.summary.firPct}%` : "--";
-    }
-
-    if (girEl) {
-        girEl.textContent = lastRound.summary?.girPct ? `${lastRound.summary.girPct}%` : "--";
-    }
-
-    if (puttsEl) {
-        puttsEl.textContent = lastRound.summary?.totalPutts ?? "--";
-    }
-
-    window.scrollTo(0, 0);
-};
-
-window.goToSummaryFromClubhouse = function () {
-    const clubhouseScreen = document.getElementById("clubhouseScreen");
-    const nineteenthHoleScreen = document.getElementById("nineteenthHoleScreen");
-
-    if (clubhouseScreen) clubhouseScreen.classList.add("hidden");
-    if (nineteenthHoleScreen) nineteenthHoleScreen.classList.remove("hidden");
 
     window.scrollTo(0, 0);
 };
 
 window.openClubhouseSummary = function () {
-
     const rounds = JSON.parse(localStorage.getItem("golfStatsCompletedRounds") || "[]");
     const lastRound = rounds[rounds.length - 1];
 
     if (!lastRound || !lastRound.holes) return;
 
-    // Use your existing summary popup function
     if (typeof showSummaryForRound === "function") {
         showSummaryForRound(
             lastRound.holes,
@@ -111,25 +87,98 @@ window.openClubhouseSummary = function () {
             "clubhouse",
             lastRound.details?.courseName || ""
         );
-    } else {
-        console.warn("Summary function not found");
     }
 };
-
 
 window.startNewRoundFromClubhouse = function () {
     if (typeof resetCurrentRound === "function") {
         resetCurrentRound();
     }
 
-    // go back to Round Details screen
     const clubhouse = document.getElementById("clubhouseScreen");
     const roundDetails = document.getElementById("roundDetailsScreen");
 
     if (clubhouse) clubhouse.classList.add("hidden");
-    if (roundDetails) roundDetails.classList.remove("hidden");
+    if (roundDetails) roundDetails.style.display = "flex";
 
     if (typeof updateRoundDetailCompletion === "function") {
         updateRoundDetailCompletion();
     }
+
+    window.scrollTo(0, 0);
+};
+
+window.closeClubhouseScreen = function () {
+    const clubhouse = document.getElementById("clubhouseScreen");
+    const wrapUp = document.getElementById("nineteenthHoleScreen");
+
+    if (clubhouse) clubhouse.classList.add("hidden");
+    if (wrapUp) wrapUp.classList.remove("hidden");
+
+    window.scrollTo(0, 0);
+};
+
+
+
+
+
+window.showClubhouseDoneScreen = function () {
+    const clubhouse = document.getElementById("clubhouseScreen");
+    const doneScreen = document.getElementById("clubhouseDoneScreen");
+    const btn = document.getElementById("clubhouseDoneStartBtn");
+
+    if (clubhouse) {
+        clubhouse.style.transition = "opacity 2s ease";
+        clubhouse.style.opacity = "0";
+    }
+
+    if (btn) {
+        btn.style.opacity = "0";
+    }
+
+    setTimeout(() => {
+        if (clubhouse) clubhouse.classList.add("hidden");
+
+        if (doneScreen) {
+            doneScreen.classList.remove("hidden");
+            doneScreen.style.display = "flex";
+
+            requestAnimationFrame(() => {
+                doneScreen.classList.add("show");
+            });
+        }
+
+        if (btn) {
+            setTimeout(() => {
+                btn.style.opacity = "1";
+            }, 2000);
+        }
+
+        window.scrollTo(0, 0);
+    }, 2000);
+};
+
+window.startNewRoundFromClubhouseDone = function () {
+    const doneScreen = document.getElementById("clubhouseDoneScreen");
+
+    if (doneScreen) {
+        doneScreen.classList.remove("show");
+        doneScreen.style.opacity = "0";
+    }
+
+    setTimeout(() => {
+        if (doneScreen) {
+            doneScreen.classList.add("hidden");
+            doneScreen.style.display = "none";
+        }
+
+        if (typeof resetCurrentRound === "function") {
+            resetCurrentRound();
+        }
+
+        const roundDetails = document.getElementById("roundDetailsScreen");
+        if (roundDetails) roundDetails.style.display = "flex";
+
+        window.scrollTo(0, 0);
+    }, 800);
 };
