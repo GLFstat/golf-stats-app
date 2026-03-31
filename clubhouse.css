@@ -81,7 +81,7 @@
     display: none;
     justify-content: center;
     align-items: center;
-    z-index: 700;
+    z-index: 999999;
     opacity: 0;
     transition: opacity 0.45s ease;
 }

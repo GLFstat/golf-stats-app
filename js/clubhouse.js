@@ -153,40 +153,56 @@ window.closeClubhouseScreen = function () {
 
 
 
-window.showClubhouseDoneScreen = function () {
+window.showClubhouseDoneScreen = function (e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
     const clubhouse = document.getElementById("clubhouseScreen");
     const doneScreen = document.getElementById("clubhouseDoneScreen");
     const btn = document.getElementById("clubhouseDoneStartBtn");
+    const logo = document.getElementById("clubhouseDoneLogo");
+
+    if (!doneScreen) {
+        alert("Clubhouse closing screen not found.");
+        return;
+    }
+
+    if (btn) btn.style.opacity = "0";
+    if (logo) {
+        logo.style.opacity = "0";
+        logo.style.transform = "scale(0.82)";
+    }
+
+
 
     if (clubhouse) {
-        clubhouse.style.transition = "opacity 2s ease";
-        clubhouse.style.opacity = "0";
-    }
-
-    if (btn) {
-        btn.style.opacity = "0";
-    }
+    clubhouse.style.transition = "opacity 0.4s ease";
+    clubhouse.style.opacity = "0";
 
     setTimeout(() => {
-        if (clubhouse) clubhouse.classList.add("hidden");
+        clubhouse.classList.add("hidden");
+        clubhouse.style.display = "none";
+    }, 1000);
+}
 
-        if (doneScreen) {
-            doneScreen.classList.remove("hidden");
-            doneScreen.style.display = "flex";
 
-            requestAnimationFrame(() => {
-                doneScreen.classList.add("show");
-            });
-        }
 
-        if (btn) {
-            setTimeout(() => {
-                btn.style.opacity = "1";
-            }, 2000);
-        }
+    doneScreen.classList.remove("hidden");
+    doneScreen.classList.add("show");
+    doneScreen.style.display = "flex";
+    doneScreen.style.opacity = "1";
+    doneScreen.style.visibility = "visible";
+    doneScreen.style.zIndex = "999999";
 
-        window.scrollTo(0, 0);
-    }, 2000);
+    if (btn) {
+        setTimeout(() => {
+            btn.style.opacity = "1";
+        }, 1800);
+    }
+
+    window.scrollTo(0, 0);
 };
 
 window.startNewRoundFromClubhouseDone = function () {
