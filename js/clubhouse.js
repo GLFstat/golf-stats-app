@@ -98,7 +98,7 @@ window.showClubhouseScreen = function () {
         </p>
 
         <p class="clubhouse-center">
-            <strong>Keep working, stay consistent, keep the momentum going, and we'll see you on the next round!</strong>
+            <strong>Keep working, stay consistent, keep the momentum going.<br>  <strong><span style="color: white;">See you on the next round!</span></strong>
         </p>
     `;
 

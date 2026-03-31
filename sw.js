@@ -1,4 +1,5 @@
-const CACHE_NAME = "golf-stats-v9999";
+const APP_VERSION = "10000";
+const CACHE_NAME = `golf-stats-${APP_VERSION}`;
 
 const BASE_PATH = self.location.pathname.replace(/\/sw\.js$/, "");
 
@@ -15,6 +16,9 @@ const CORE_ASSETS = [
     withBase("/js/state.js"),
     withBase("/js/storage.js"),
     withBase("/js/app.js"),
+    withBase("/js/analytic.js"),
+    withBase("/clubhouse.css"),
+    withBase("/js/clubhouse.js"),
 
     // Splash / header / key images
     withBase("/images/splash-1.jpg"),
@@ -22,15 +26,18 @@ const CORE_ASSETS = [
     withBase("/images/Stracker-header-1.png"),
     withBase("/images/Stracker-header-2.png"),
     withBase("/images/Round-details-1.jpg"),
+    withBase("/images/clubhouse.png"),
 
-    // Golf backgrounds
 // Golf backgrounds
 withBase("/images/golf-shot1.jpg"),
 withBase("/images/golf-shot1b.jpg"),
 withBase("/images/golf-shot2.jpg"),
 withBase("/images/golf-shot3.jpg"),
 withBase("/images/golf-shot4.jpg"),
+withBase("/images/golf-shot5.jpg"),
 withBase("/images/golf-shot6.jpg"),
+withBase("/images/golf-shot7.jpg"),
+withBase("/images/golf-shot9.jpg"),
 withBase("/images/golf-shot10.jpg"),
 
     // Other app images you’ve used
