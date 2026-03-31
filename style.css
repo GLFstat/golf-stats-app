@@ -1534,7 +1534,9 @@ header h1 {
 #savedRoundsBackBtn,
 #savedRoundsHubBackBtn,
 #savedRoundsListBackBtn,
-#performanceChartsBackBtn {
+#performanceChartsBackBtn,
+#goToClubhouseBtn 
+{
     background: linear-gradient(to bottom, #3a3a3a 0%, #111 50%, #000 100%);
     color: white;
     border: 1px solid #5a5a5a;
@@ -1703,7 +1705,12 @@ header h1 {
 
     #nineteenthHoleScreen {
         padding: 8px 8px 4px;
+        gap: 8px;
     }
+
+    #nineteenthHoleScreen .actions button {
+    margin: 0;
+}
 
     .nineteenth-box {
         width: 100%;
