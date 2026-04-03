@@ -137,16 +137,18 @@
         </div>
       </div>
 
-      <div class="round-form-note" id="roundFormNote">
-        Required rows must be complete to start. Tee details are recommended and can be added later.
-      </div>
+<div class="round-form-note" id="roundFormNote">
+  Required rows must be complete to start. Tee details are recommended and can be added later.
+</div>
 
-      <button id="startRoundBtn" type="button">Start Round</button>
-      <button id="demoRoundBtn" type="button">Load Demo Round</button>
-      <button id="fillTo18Btn" type="button">Fill to Hole 18</button>
+<button id="startRoundBtn" type="button">Start Round</button>
 
-    </div>
-  </div>
+<div class="dev-only">
+  <button id="demoRoundBtn" type="button">Load Demo Round</button>
+  <button id="fillTo18Btn" type="button">Fill to Hole 18</button>
+</div>
+
+</div>
 </div>
 
 <div id="appVersionDisplay" style="
@@ -617,65 +619,13 @@
   </div>
 </div>
 
-<!-- For Testing Saved Rounds -->
-<button id="devJumpToSavedRounds" onclick="
-document.getElementById('roundDetailsScreen')?.style.setProperty('display','none');
-document.getElementById('appContainer')?.style.setProperty('display','none');
-document.getElementById('nineteenthHoleScreen')?.classList.add('hidden');
-document.getElementById('performanceChartsScreen')?.classList.add('hidden');
-document.getElementById('savedRoundsListScreen')?.classList.add('hidden');
-document.getElementById('savedRoundsScreen')?.classList.remove('hidden');
-if (typeof window.renderSavedRounds === 'function') window.renderSavedRounds();
-document.dispatchEvent(new Event('savedRoundsShown'));
-" style="
-position: fixed;
-top: 6px;
-left: 6px;
-z-index: 2147483647;
-width: 20px;
-height: 20px;
-padding: 0;
-background: #959595;
-color: transparent;
-border: none;
-border-radius: 0;
-cursor: pointer;
-font-size: 0;
-line-height: 0;
-">
-SR
 
-DEV: Saved Rounds
-</button>
-
-
-<!-- ===== DEV BUILD Btn for Clubhouse section (REMOVE BEFORE TOURNAMENT) ===== -->
-<button id="devClubhouseBtn" type="button" onclick="showClubhouseScreen()" style="
-position: fixed;
-top: 6px;
-right: 6px;
-z-index: 2147483647;
-width: 20px;
-height: 20px;
-padding: 0;
-background: #949494;
-color: transparent;
-border: none;
-border-radius: 0;
-cursor: pointer;
-font-size: 0;
-line-height: 0;
-">
-CH
-
-DEV: Clubhouse
-</button>
 
 
 <!-- ===== Clubhouse Block) ===== -->
 
 <!-- ===== DEV BUILD LABEL (REMOVE BEFORE TOURNAMENT) ===== -->
-<<div id="clubhouseScreen" class="hidden">
+<div id="clubhouseScreen" class="hidden">
   <div class="clubhouse-box">
 
     <h2>Welcome to the Clubhouse</h2>
@@ -708,8 +658,8 @@ DEV: Clubhouse
 </div>
 
 
-
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
 
 <script src="js/state.js"></script>
 <script src="js/storage.js"></script>

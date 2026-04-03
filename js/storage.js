@@ -76,10 +76,29 @@ function saveCompletedRounds(rounds) {
     return mainSaved && backupSaved;
 }
 
-function addCompletedRound(round) {
+async function addCompletedRound(round) {
     const rounds = getCompletedRounds();
     rounds.unshift(round);
-    return saveCompletedRounds(rounds);
+
+    const savedLocally = saveCompletedRounds(rounds);
+
+    if (!savedLocally) {
+        return false;
+    }
+
+    try {
+        if (window.uploadCompletedRoundToSupabase) {
+            const result = await window.uploadCompletedRoundToSupabase(round);
+
+            if (!result.success) {
+                console.warn("Round saved locally, but Supabase upload failed:", result.error);
+            }
+        }
+    } catch (err) {
+        console.warn("Round saved locally, but cloud upload crashed:", err);
+    }
+
+    return true;
 }
 
 function generateRoundId() {
@@ -139,7 +158,7 @@ function buildCompletedRound() {
     };
 }
 
-function archiveCompletedRound() {
+async function archiveCompletedRound() {
     console.log("🔥 archiveCompletedRound RUNNING");
     if (!roundJustCompleted || getSavedHoleCount() !== 18) {
         return true;
@@ -154,7 +173,7 @@ function archiveCompletedRound() {
     const round = buildCompletedRound();
     round.roundFinalized = true;
 
-    const saved = addCompletedRound(round);
+    const saved = await addCompletedRound(round);
 
     if (!saved) {
         alert("Could not save round history.");

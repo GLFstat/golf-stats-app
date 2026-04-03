@@ -1,3 +1,7 @@
+
+const DEV_MODE = false; // 🔥 set to true when you want cheat buttons back
+
+
 // ===== Mobile touch handling for counter buttons =====
 function wireCounterTouchButtons() {
     document.querySelectorAll(".counter-group button").forEach(btn => {
@@ -2366,12 +2370,12 @@ function resetRoundData() {
 
 
 
-const DEV_MODE = false;
-
 window.addEventListener("load", () => {
     if (DEV_MODE && window.location.search.includes("test")) {
         fillAllButLastHole();
     }
 });
+
+
 
 // Service Worker DISABLED

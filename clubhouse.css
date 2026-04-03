@@ -144,3 +144,24 @@
         0 6px 18px rgba(0, 0, 0, 0.35);
     
 }
+
+/* ===== FIX: Remove tap highlight / ghost rectangle ===== */
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+#clubhouseCloseBtn {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  transition: none !important;
+}
+
+#clubhouseCloseBtn:active {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+#clubhouseCloseBtn {
+  transition: none !important;
+}

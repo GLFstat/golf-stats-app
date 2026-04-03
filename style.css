@@ -2194,3 +2194,19 @@ header h1 {
     left: 20px !important;
     right: auto !important;
 }
+
+.dev-only {
+  display: none !important;
+}
+
+#roundDetailsScreen button:empty {
+  display: none !important;
+}
+
+#roundDetailsScreen button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+#roundDetailsScreen .dev-only {
+  display: none !important;
+}

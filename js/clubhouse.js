@@ -14,26 +14,36 @@ window.showClubhouseScreen = function () {
         return;
     }
 
-    let rounds = [];
+    // FIRST CHOICE: use the live current round in memory
+    const liveHoles = (typeof holes !== "undefined" && Array.isArray(holes))
+        ? holes.filter(h => h && h.saved)
+        : [];
+
+    const liveDetails = (typeof getRoundDetails === "function")
+        ? getRoundDetails()
+        : {};
+
+    // FALLBACK: latest saved round from localStorage
+    let storedRound = null;
     try {
-        rounds = JSON.parse(localStorage.getItem("golfStatsCompletedRounds") || "[]");
+        const rounds = JSON.parse(localStorage.getItem("golfStatsCompletedRounds") || "[]");
+        storedRound = rounds.length ? rounds[rounds.length - 1] : null;
     } catch (e) {
-        rounds = [];
+        storedRound = null;
     }
 
-    let lastRound = rounds.length ? rounds[rounds.length - 1] : null;
+    let sourceHoles = [];
+    let sourceDetails = {};
 
-    // Fallback to active round if completed round is not available yet
-    if (!lastRound) {
-        try {
-            lastRound = JSON.parse(localStorage.getItem("golfStatsActiveRound") || "null");
-        } catch (e) {
-            lastRound = null;
-        }
-    }
-
-    // If still nothing, do NOT hide the current screen
-    if (!lastRound) {
+    if (liveHoles.length > 0) {
+        sourceHoles = liveHoles;
+        sourceDetails = liveDetails || {};
+    } else if (storedRound) {
+        sourceHoles = Array.isArray(storedRound.holes)
+            ? storedRound.holes.filter(h => h && h.saved)
+            : [];
+        sourceDetails = storedRound.details || storedRound.roundDetails || {};
+    } else {
         alert("No round data was found for Clubhouse yet.");
         return;
     }
@@ -50,30 +60,24 @@ window.showClubhouseScreen = function () {
     clubhouseScreen.style.opacity = "1";
     clubhouseScreen.style.visibility = "visible";
 
-    const holes = Array.isArray(lastRound.holes)
-        ? lastRound.holes.filter(h => h && h.saved)
-        : [];
+    const totalHoles = sourceHoles.length;
 
-    const totalHoles = holes.length;
-
-    const firOpportunities = holes.filter(h => Number(h.par) >= 4).length;
-    const firMade = holes.filter(h => Number(h.par) >= 4 && h.fir).length;
+    const firOpportunities = sourceHoles.filter(h => Number(h.par || 0) >= 4).length;
+    const firMade = sourceHoles.filter(h => Number(h.par || 0) >= 4 && h.fir === true).length;
     const fir = firOpportunities ? Math.round((firMade / firOpportunities) * 100) : "--";
 
-    const girMade = holes.filter(h => h.gir).length;
+    const girMade = sourceHoles.filter(h => h.gir === true).length;
     const gir = totalHoles ? Math.round((girMade / totalHoles) * 100) : "--";
 
     const putts = totalHoles
-        ? holes.reduce((sum, h) => sum + Number(h.putts || 0), 0)
+        ? sourceHoles.reduce((sum, h) => sum + Number(h.putts || 0), 0)
         : "--";
 
     const score = totalHoles
-        ? holes.reduce((sum, h) => sum + Number(h.score || 0), 0)
+        ? sourceHoles.reduce((sum, h) => sum + Number(h.score || 0), 0)
         : "--";
 
-    const coursePar =
-        Number(lastRound.details?.coursePar || lastRound.coursePar || 0);
-
+    const coursePar = Number(sourceDetails.coursePar || 0);
     const vsPar = coursePar && score !== "--" ? score - coursePar : 0;
 
     let opener = "Nice work out there!";
@@ -84,7 +88,7 @@ window.showClubhouseScreen = function () {
         <p class="clubhouse-center"><strong>${opener}</strong></p>
 
         <p>
-            Your round at <strong>${lastRound.details?.courseName || "this course"}</strong> shows:
+            Your round at <strong>${sourceDetails.courseName || "this course"}</strong> shows:
         </p>
 
         <p>
@@ -98,7 +102,7 @@ window.showClubhouseScreen = function () {
         </p>
 
         <p class="clubhouse-center">
-            <strong>Keep working, stay consistent, keep the momentum going.<br>  <strong><span style="color: white;">See you on the next round!</span></strong>
+            <strong>Keep working, stay consistent, keep the momentum going.<br><span style="color: white;">See you on the next round!</span></strong>
         </p>
     `;
 
@@ -106,17 +110,38 @@ window.showClubhouseScreen = function () {
 };
 
 window.openClubhouseSummary = function () {
+    const currentCourseName =
+        (typeof getFieldValue === "function" ? getFieldValue("courseName") : "") || "";
+
+    const liveHoles =
+        Array.isArray(window.holes) ? window.holes :
+        (typeof holes !== "undefined" && Array.isArray(holes) ? holes : []);
+
+    const liveSavedCount = liveHoles.filter(h => h && h.saved).length;
+
+    // First choice: the round currently in memory
+    if (liveSavedCount > 0 && typeof showSummaryForRound === "function") {
+        showSummaryForRound(
+            liveHoles,
+            null,
+            "clubhouse",
+            currentCourseName
+        );
+        return;
+    }
+
+    // Fallback: most recent saved round from localStorage
     const rounds = JSON.parse(localStorage.getItem("golfStatsCompletedRounds") || "[]");
     const lastRound = rounds[rounds.length - 1];
 
-    if (!lastRound || !lastRound.holes) return;
+    if (!lastRound || !Array.isArray(lastRound.holes)) return;
 
     if (typeof showSummaryForRound === "function") {
         showSummaryForRound(
             lastRound.holes,
             null,
             "clubhouse",
-            lastRound.details?.courseName || ""
+            lastRound.details?.courseName || lastRound.roundDetails?.courseName || ""
         );
     }
 };
@@ -161,33 +186,41 @@ window.showClubhouseDoneScreen = function (e) {
 
     const clubhouse = document.getElementById("clubhouseScreen");
     const doneScreen = document.getElementById("clubhouseDoneScreen");
-    const btn = document.getElementById("clubhouseDoneStartBtn");
+    const startBtn = document.getElementById("clubhouseDoneStartBtn");
     const logo = document.getElementById("clubhouseDoneLogo");
+    const doneBtn = document.getElementById("clubhouseCloseBtn");
 
     if (!doneScreen) {
         alert("Clubhouse closing screen not found.");
         return;
     }
 
-    if (btn) btn.style.opacity = "0";
+    if (doneBtn) {
+        doneBtn.style.opacity = "0";
+        doneBtn.style.visibility = "hidden";
+        doneBtn.style.pointerEvents = "none";
+        doneBtn.style.boxShadow = "none";
+        doneBtn.style.background = "transparent";
+        doneBtn.style.borderColor = "transparent";
+    }
+
+    if (startBtn) startBtn.style.opacity = "0";
+
     if (logo) {
         logo.style.opacity = "0";
         logo.style.transform = "scale(0.82)";
     }
 
-
-
     if (clubhouse) {
-    clubhouse.style.transition = "opacity 0.4s ease";
-    clubhouse.style.opacity = "0";
+        clubhouse.style.transition = "opacity 0.4s ease";
+        clubhouse.style.opacity = "0";
 
-    setTimeout(() => {
-        clubhouse.classList.add("hidden");
-        clubhouse.style.display = "none";
-    }, 1000);
-}
-
-
+        setTimeout(() => {
+            clubhouse.classList.add("hidden");
+            clubhouse.style.display = "none";
+            clubhouse.style.opacity = "1";
+        }, 400);
+    }
 
     doneScreen.classList.remove("hidden");
     doneScreen.classList.add("show");
@@ -196,9 +229,9 @@ window.showClubhouseDoneScreen = function (e) {
     doneScreen.style.visibility = "visible";
     doneScreen.style.zIndex = "999999";
 
-    if (btn) {
+    if (startBtn) {
         setTimeout(() => {
-            btn.style.opacity = "1";
+            startBtn.style.opacity = "1";
         }, 1800);
     }
 
