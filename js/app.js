@@ -454,6 +454,16 @@ function hideFinalClosurePopup() {
     }
 }
 
+function resetForBrandNewRound() {
+    console.log("Starting a brand-new round: clearing old live session");
+
+    if (typeof window.clearLiveSessionId === "function") {
+        window.clearLiveSessionId();
+    }
+
+    resetCurrentRound();
+}
+
 function resetCurrentRound() {
     // ===== FULL STATE RESET =====
     currentHole = 1;
@@ -1483,7 +1493,7 @@ function playSplashToFreshRoundDetails() {
     if (summaryModal) summaryModal.style.display = "none";
     if (nineteenthHoleScreen) nineteenthHoleScreen.classList.add("hidden");
 
-    resetCurrentRound();
+    resetForBrandNewRound();
     showRoundDetailsScreen();
 
     if (splash) {
@@ -1854,7 +1864,7 @@ if (newRoundBtn) {
         } else {
             clearActiveRoundStorage();
             removeFromStorage(ROUND_BG_INDEX_KEY);
-            resetCurrentRound();
+            resetForBrandNewRound();
             showRoundDetailsScreen();
         }
     });
@@ -1872,7 +1882,7 @@ if (deleteAndStartNewBtn) {
 
         clearActiveRoundStorage();
         removeFromStorage(ROUND_BG_INDEX_KEY);
-        resetCurrentRound();
+        resetForBrandNewRound();
         showRoundDetailsScreen();
     });
 }
@@ -2136,7 +2146,7 @@ window.renderSavedRounds = function () {
     const nineteenthNewRoundBtn = document.getElementById("nineteenthNewRoundBtn");
     if (nineteenthNewRoundBtn) {
         nineteenthNewRoundBtn.addEventListener("click", () => {
-            resetCurrentRound();
+            resetForBrandNewRound();
         });
     }
 

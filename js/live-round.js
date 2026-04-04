@@ -31,15 +31,22 @@
     return Number.isFinite(n) ? n : fallback;
   }
 
-  function getSavedHoles() {
-    if (!Array.isArray(window.holes)) return [];
-    return window.holes.filter(h => h && h.saved);
+    function getSavedHoles() {
+    const liveHoles = Array.isArray(window.holes)
+      ? window.holes
+      : (typeof holes !== "undefined" && Array.isArray(holes) ? holes : []);
+
+    return liveHoles.filter(h => h && h.saved);
   }
 
-  function buildHolePayload() {
-    if (!Array.isArray(window.holes)) return [];
+    function buildHolePayload() {
+    const liveHoles = Array.isArray(window.holes)
+      ? window.holes
+      : (typeof holes !== "undefined" && Array.isArray(holes) ? holes : []);
 
-    return window.holes.map((hole, index) => ({
+    if (!Array.isArray(liveHoles)) return [];
+
+    return liveHoles.map((hole, index) => ({
       holeNumber: index + 1,
       saved: !!hole?.saved,
       score: hole?.score ?? null,
@@ -50,8 +57,17 @@
     }));
   }
 
-  function buildSnapshot() {
-    const details = window.roundDetails || {};
+    function buildSnapshot() {
+    const details =
+      typeof getRoundDetails === "function"
+        ? getRoundDetails()
+        : (window.roundDetails || {});
+
+    const liveCurrentHole =
+      typeof currentHole !== "undefined"
+        ? currentHole
+        : (window.currentHole || 1);
+
     const savedHoles = getSavedHoles();
 
     let totalScore = 0;
@@ -73,7 +89,7 @@
       player_name: details.playerName || "",
       course_name: details.courseName || "",
       round_date: details.roundDate || new Date().toISOString().slice(0, 10),
-      current_hole: safeNum(window.currentHole, 1),
+      current_hole: safeNum(liveCurrentHole, 1),
       holes_completed: savedHoles.length,
       total_score: totalScore,
       total_putts: totalPutts,
@@ -85,6 +101,7 @@
       last_update: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
+  }
   }
 
   async function sendLiveRound(status = "active") {
@@ -136,7 +153,7 @@
     clearLiveSessionId();
   }
 
-  window.startLiveRoundTracking = function () {
+   window.startLiveRoundTracking = function () {
     sendLiveRound("active");
   };
 
@@ -151,4 +168,6 @@
   window.deleteLiveRoundTracking = function () {
     deleteLiveRound();
   };
+
+  window.clearLiveSessionId = clearLiveSessionId;
 })();
