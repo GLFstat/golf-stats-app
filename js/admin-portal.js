@@ -136,12 +136,17 @@ function showDetails(round) {
         <div class="live-hole-of">of 18</div>
       </div>
     </div>
-
+    // ===== LIVE PORTAL STAT DISPLAY FORMATTING =====
     <div class="live-stats-list">
-      <div class="live-stat-line"><strong>Total Score:</strong> ${escapeHtml(formatScore(round.total_score, true))}</div>
-      <div class="live-stat-line"><strong>Total Putts:</strong> ${escapeHtml(String(round.total_putts ?? 0))}</div>
-      <div class="live-stat-line"><strong>FIR:</strong> ${escapeHtml(String(round.total_fir ?? 0))}</div>
-      <div class="live-stat-line"><strong>GIR:</strong> ${escapeHtml(String(round.total_gir ?? 0))}</div>
+      <div class="live-stat-line total-score-line">
+        <strong>Total Score:</strong>
+        <span class="total-score-value">
+          ${escapeHtml(String(round.total_score ?? 0))} (${escapeHtml(formatScore((round.total_score ?? 0) - ((round.holes_completed ?? 0) * 4), true))} thru ${escapeHtml(String(round.holes_completed ?? 0))})
+        </span>
+      </div>
+      <div class="live-stat-line"><strong>Total Putts:</strong> ${escapeHtml(String(round.total_putts ?? 0))} (thru ${escapeHtml(String(round.holes_completed ?? 0))})</div>
+      <div class="live-stat-line"><strong>FIR:</strong> ${escapeHtml(String(round.total_fir ?? 0))} (${escapeHtml(String(round.holes_completed ? Math.round(((round.total_fir ?? 0) / round.holes_completed) * 100) : 0))}% thru ${escapeHtml(String(round.holes_completed ?? 0))})</div>
+      <div class="live-stat-line"><strong>GIR:</strong> ${escapeHtml(String(round.total_gir ?? 0))} (${escapeHtml(String(round.holes_completed ? Math.round(((round.total_gir ?? 0) / round.holes_completed) * 100) : 0))}% thru ${escapeHtml(String(round.holes_completed ?? 0))})</div>
       <div class="live-stat-line"><strong>Up & Downs:</strong> ${escapeHtml(String(round.total_up_downs ?? 0))}</div>
       <div class="live-stat-line"><strong>Status:</strong> ${escapeHtml(round.status || "active")}</div>
     </div>
