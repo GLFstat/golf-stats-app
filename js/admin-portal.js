@@ -115,21 +115,32 @@ function showDetails(round) {
 
   // ===== HOLE TILE DISPLAY (vs PAR) =====
 holes.forEach((h) => {
-  let display = "-";
+  // ===== HOLE TILE DISPLAY (vs PAR + COLOR) =====
+let display = "-";
+let resultClass = "";
 
-  if (h && h.saved && h.score != null) {
-    const par = h.par || 4; // fallback for now
-    const vsPar = h.score - par;
+if (h && h.saved && h.score != null) {
+  const par = h.par || 4;
+  const vsPar = h.score - par;
 
-    display = vsPar === 0
-      ? "E"
-      : vsPar > 0
-        ? `+${vsPar}`
-        : `${vsPar}`;
+  display = vsPar === 0
+    ? "E"
+    : vsPar > 0
+      ? `+${vsPar}`
+      : `${vsPar}`;
+
+  // Color logic
+  if (vsPar < 0) {
+    resultClass = "hole-birdie";   // red
+  } else if (vsPar === 0) {
+    resultClass = "hole-par";      // green
+  } else {
+    resultClass = "hole-bogey";    // dark gray
   }
+}
 
   holesHtml += `
-    <div class="hole ${h.saved ? "saved" : ""}">
+    <div class="hole ${h.saved ? "saved" : ""} ${resultClass}">
       <div class="hole-number"><strong>${h.holeNumber ?? "-"}</strong></div>
       <div class="hole-score">${display}</div>
     </div>

@@ -478,3 +478,24 @@ body {
   font-size: 20px;
   font-weight: 700;
 }
+
+/* ===== HOLE TILE COLOR SYSTEM ===== */
+
+.hole {
+  color: #ffffff; /* keep text white */
+}
+
+/* Birdie or better */
+.hole-birdie {
+  background-color: #d32f2f; /* red */
+}
+
+/* Par */
+.hole-par {
+  background-color: #2e7d32; /* green */
+}
+
+/* Bogey or worse */
+.hole-bogey {
+  background-color: #333333; /* dark gray */
+}
