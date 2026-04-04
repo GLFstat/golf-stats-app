@@ -1009,6 +1009,7 @@ function completeHoleSave() {
     roundStarted = true;
     roundFinalized = false;
     persistActiveRound();
+    updateLiveRoundTracking();
     updateHoleScreen();
 
     if (isLastHole) {

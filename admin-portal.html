@@ -9,20 +9,19 @@
 </head>
 <body>
   <div class="portal-shell">
-
     <header class="portal-header">
-  <div class="header-overlay">
+      <div class="header-overlay">
+        <div class="header-left">
+          <img src="images/Stracker-header-2.png" alt="Stracker Logo" class="header-logo" />
+          <div class="header-title-lockup">
+            <div class="header-subtitle">Admin Portal</div>
+          </div>
+        </div>
 
-  <div class="header-left">
-    <img src="images/Stracker-header-2.png" alt="Stracker Logo" class="header-logo" />
-  </div>
-
-  <div class="header-right">
-    <div class="header-subtitle">Admin Portal</div>
-    <button id="logoutBtn" class="header-btn" type="button">Logout</button>
-  </div>
-
-</div>
+        <div class="header-right">
+          <button id="logoutBtn" class="header-btn" type="button">Logout</button>
+        </div>
+      </div>
     </header>
 
     <main class="portal-main">
@@ -36,8 +35,38 @@
             </div>
           </div>
 
-          <div id="roundDetails" class="live-round-content empty">
-            Select a round to view details
+          <div id="roundDetails" class="live-round-content">
+            <div class="live-player-row">
+              <div>
+                <div class="live-player-name">Waiting for Live Round</div>
+                <div class="live-course-name">No active player data yet</div>
+              </div>
+
+              <div class="live-hole-box">
+                <div class="live-hole-number">--</div>
+                <div class="live-hole-of">of 18</div>
+              </div>
+            </div>
+
+            <div class="live-stats-list">
+              <div class="live-stat-line"><strong>Total Score:</strong> --</div>
+              <div class="live-stat-line"><strong>Total Putts:</strong> --</div>
+              <div class="live-stat-line"><strong>FIR:</strong> --</div>
+              <div class="live-stat-line"><strong>GIR:</strong> --</div>
+              <div class="live-stat-line"><strong>Up &amp; Downs:</strong> --</div>
+              <div class="live-stat-line"><strong>Penalties:</strong> --</div>
+            </div>
+
+            <div class="holes-grid placeholder-holes">
+              <div class="hole">1</div><div class="hole">2</div><div class="hole">3</div><div class="hole">4</div><div class="hole">5</div><div class="hole">6</div>
+              <div class="hole">7</div><div class="hole">8</div><div class="hole">9</div><div class="hole">10</div><div class="hole">11</div><div class="hole">12</div>
+              <div class="hole">13</div><div class="hole">14</div><div class="hole">15</div><div class="hole">16</div><div class="hole">17</div><div class="hole">18</div>
+            </div>
+
+            <div class="live-footer-row">
+              <div class="last-updated">Last updated: --</div>
+              <button class="refresh-main-btn" type="button" onclick="loadLiveRounds()">Refresh</button>
+            </div>
           </div>
         </div>
 
@@ -47,7 +76,22 @@
           </div>
 
           <div id="liveRoundsList" class="completed-rounds-list">
-            Loading...
+            <table class="rounds-table">
+              <thead>
+                <tr>
+                  <th>Course</th>
+                  <th>Date</th>
+                  <th>Score</th>
+                  <th>Test</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="5" class="placeholder-cell">No rounds loaded yet</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -67,13 +111,12 @@
           </div>
 
           <div id="maintenanceStats" class="maintenance-stats">
-            Records: --
+            Records: -- total, -- test round(s)
           </div>
         </div>
 
       </section>
     </main>
-
   </div>
 
   <script src="js/admin-portal.js"></script>
