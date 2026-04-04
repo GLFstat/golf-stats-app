@@ -2005,6 +2005,7 @@ if (deleteAndStartNewBtn) {
             roundStarted = true;
             roundFinalized = false;
             persistActiveRound();
+            startLiveRoundTracking(); 
             showStatsScreen();
         });
     }
