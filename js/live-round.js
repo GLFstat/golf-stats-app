@@ -14,16 +14,27 @@
   }
 
   function getOrCreateSessionId() {
-    let id = localStorage.getItem(LIVE_SESSION_KEY);
-    if (!id) {
+    let id = "";
+    try {
+      id = localStorage.getItem(LIVE_SESSION_KEY);
+      if (!id) {
+        id = makeSessionId();
+        localStorage.setItem(LIVE_SESSION_KEY, id);
+      }
+    } catch (err) {
+      console.warn("Could not read/create live session id:", err);
       id = makeSessionId();
-      localStorage.setItem(LIVE_SESSION_KEY, id);
     }
     return id;
   }
 
   function clearLiveSessionId() {
-    localStorage.removeItem(LIVE_SESSION_KEY);
+    try {
+      localStorage.removeItem(LIVE_SESSION_KEY);
+      console.log("Live session id cleared");
+    } catch (err) {
+      console.warn("Could not clear live session id:", err);
+    }
   }
 
   function safeNum(value, fallback = 0) {
@@ -31,24 +42,33 @@
     return Number.isFinite(n) ? n : fallback;
   }
 
-    function getSavedHoles() {
-    const liveHoles = Array.isArray(window.holes)
-      ? window.holes
-      : (typeof holes !== "undefined" && Array.isArray(holes) ? holes : []);
-
-    return liveHoles.filter(h => h && h.saved);
+  function getLiveHoles() {
+    if (typeof holes !== "undefined" && Array.isArray(holes)) return holes;
+    if (Array.isArray(window.holes)) return window.holes;
+    return [];
   }
 
-    function buildHolePayload() {
-    const liveHoles = Array.isArray(window.holes)
-      ? window.holes
-      : (typeof holes !== "undefined" && Array.isArray(holes) ? holes : []);
+  function getLiveRoundDetails() {
+    if (typeof getRoundDetails === "function") {
+      return getRoundDetails();
+    }
+    return window.roundDetails || {};
+  }
 
-    if (!Array.isArray(liveHoles)) return [];
+  function getLiveCurrentHole() {
+    if (typeof currentHole !== "undefined") return currentHole;
+    if (typeof window.currentHole !== "undefined") return window.currentHole;
+    return 1;
+  }
 
-    return liveHoles.map((hole, index) => ({
+  function getSavedHoles() {
+    return getLiveHoles().filter(h => h && h.saved);
+  }
+
+  function buildHolePayload() {
+    return getLiveHoles().map((hole, index) => ({
       holeNumber: index + 1,
-      saved: !!hole?.saved,
+      saved: !!(hole && hole.saved),
       score: hole?.score ?? null,
       putts: hole?.putts ?? null,
       fir: !!hole?.fir,
@@ -57,17 +77,8 @@
     }));
   }
 
-    function buildSnapshot() {
-    const details =
-      typeof getRoundDetails === "function"
-        ? getRoundDetails()
-        : (window.roundDetails || {});
-
-    const liveCurrentHole =
-      typeof currentHole !== "undefined"
-        ? currentHole
-        : (window.currentHole || 1);
-
+  function buildSnapshot() {
+    const details = getLiveRoundDetails();
     const savedHoles = getSavedHoles();
 
     let totalScore = 0;
@@ -89,7 +100,7 @@
       player_name: details.playerName || "",
       course_name: details.courseName || "",
       round_date: details.roundDate || new Date().toISOString().slice(0, 10),
-      current_hole: safeNum(liveCurrentHole, 1),
+      current_hole: safeNum(getLiveCurrentHole(), 1),
       holes_completed: savedHoles.length,
       total_score: totalScore,
       total_putts: totalPutts,
@@ -101,7 +112,6 @@
       last_update: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
-  }
   }
 
   async function sendLiveRound(status = "active") {
@@ -131,13 +141,23 @@
 
   async function deleteLiveRound() {
     const client = getSupabaseClient();
-    if (!client) {
+    const sessionId = (() => {
+      try {
+        return localStorage.getItem(LIVE_SESSION_KEY);
+      } catch (err) {
+        return "";
+      }
+    })();
+
+    if (!sessionId) {
       clearLiveSessionId();
       return;
     }
 
-    const sessionId = localStorage.getItem(LIVE_SESSION_KEY);
-    if (!sessionId) return;
+    if (!client) {
+      clearLiveSessionId();
+      return;
+    }
 
     const { error } = await client
       .from(LIVE_TABLE)
@@ -153,7 +173,7 @@
     clearLiveSessionId();
   }
 
-   window.startLiveRoundTracking = function () {
+  window.startLiveRoundTracking = function () {
     sendLiveRound("active");
   };
 
