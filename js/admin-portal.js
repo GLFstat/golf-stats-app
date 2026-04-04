@@ -276,3 +276,8 @@ window.loadLiveRounds = loadLiveRounds;
 window.deleteRound = deleteRound;
 
 loadLiveRounds();
+
+// Auto refresh every 5 seconds
+setInterval(() => {
+  loadLiveRounds();
+}, 5000);
