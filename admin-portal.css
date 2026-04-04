@@ -499,3 +499,29 @@ body {
 .hole-bogey {
   background-color: #333333; /* dark gray */
 }
+
+/* ===== FORCE LIVE HOLE TILE COLORS ===== */
+
+.holes-grid .hole.hole-birdie {
+  background: #d32f2f !important;
+  color: #ffffff !important;
+}
+
+.holes-grid .hole.hole-par {
+  background: #2e7d32 !important;
+  color: #ffffff !important;
+}
+
+.holes-grid .hole.hole-bogey {
+  background: #333333 !important;
+  color: #ffffff !important;
+}
+
+.holes-grid .hole.hole-birdie strong,
+.holes-grid .hole.hole-par strong,
+.holes-grid .hole.hole-bogey strong,
+.holes-grid .hole.hole-birdie .hole-score,
+.holes-grid .hole.hole-par .hole-score,
+.holes-grid .hole.hole-bogey .hole-score {
+  color: #ffffff !important;
+}
