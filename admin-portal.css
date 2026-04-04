@@ -466,3 +466,15 @@ body {
   opacity: 0.8;
   margin-left: 4px;
 }
+
+/* ===== HOLE TILE SIZE IMPROVEMENT ===== */
+
+.hole-number {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.hole-score {
+  font-size: 20px;
+  font-weight: 700;
+}

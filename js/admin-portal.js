@@ -113,14 +113,28 @@ function showDetails(round) {
 
   let holesHtml = `<div class="holes-grid">`;
 
-  holes.forEach((h) => {
-    holesHtml += `
-      <div class="hole ${h.saved ? "saved" : ""}">
-        <div><strong>${h.holeNumber ?? "-"}</strong></div>
-        <div>${h.score ?? "-"}</div>
-      </div>
-    `;
-  });
+  // ===== HOLE TILE DISPLAY (vs PAR) =====
+holes.forEach((h) => {
+  let display = "-";
+
+  if (h && h.saved && h.score != null) {
+    const par = h.par || 4; // fallback for now
+    const vsPar = h.score - par;
+
+    display = vsPar === 0
+      ? "E"
+      : vsPar > 0
+        ? `+${vsPar}`
+        : `${vsPar}`;
+  }
+
+  holesHtml += `
+    <div class="hole ${h.saved ? "saved" : ""}">
+      <div class="hole-number"><strong>${h.holeNumber ?? "-"}</strong></div>
+      <div class="hole-score">${display}</div>
+    </div>
+  `;
+});
 
   holesHtml += `</div>`;
 
@@ -136,7 +150,7 @@ function showDetails(round) {
         <div class="live-hole-of">of 18</div>
       </div>
     </div>
-    // ===== LIVE PORTAL STAT DISPLAY FORMATTING =====
+    
     <div class="live-stats-list">
       <div class="live-stat-line total-score-line">
         <strong>Total Score:</strong>
