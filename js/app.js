@@ -1981,45 +1981,43 @@ if (deleteAndStartNewBtn) {
     }
 
     const startRoundBtn = document.getElementById("startRoundBtn");
-    if (startRoundBtn) {
-        startRoundBtn.addEventListener("click", () => {
-            updateCoursePar();
-            updateParRowState();
+   if (startRoundBtn) {
+    startRoundBtn.addEventListener("click", () => {
+        updateCoursePar();
+        updateParRowState();
 
-            if (postRoundMode) {
-                return;
-            }
+        if (postRoundMode) {
+            return;
+        }
 
-            const validation = validateRoundDetailsForStart();
-            if (!validation.valid) {
-                if (validationText) validationText.textContent = validation.message;
-                if (validationPopup) validationPopup.style.display = "flex";
-                return;
-            }
+        const validation = validateRoundDetailsForStart();
+        if (!validation.valid) {
+            if (validationText) validationText.textContent = validation.message;
+            if (validationPopup) validationPopup.style.display = "flex";
+            return;
+        }
 
-            const startingHoleField = document.getElementById("startingHole");
-            if (startingHoleField) {
-                startingHoleField.disabled = anyHoleSaved();
-            }
+        const startingHoleField = document.getElementById("startingHole");
+        if (startingHoleField) {
+            startingHoleField.disabled = anyHoleSaved();
+        }
 
-            const isBrandNewRound = !roundStarted || !anyHoleSaved();
+        const isBrandNewRound = !roundStarted || !anyHoleSaved();
 
-            if (isBrandNewRound) {
-                startingHole = parseInt(document.getElementById("startingHole")?.value, 10) || 1;
-                playOrder = buildPlayOrder(startingHole);
-                currentHoleIndex = 0;
-                syncCurrentHoleFromIndex();
-                roundFinalized = false;
-                advanceRoundBackground();
-            }
-
-            roundStarted = true;
+        if (isBrandNewRound) {
+            startingHole = parseInt(document.getElementById("startingHole")?.value, 10) || 1;
+            playOrder = buildPlayOrder(startingHole);
+            currentHoleIndex = 0;
+            syncCurrentHoleFromIndex();
             roundFinalized = false;
-            persistActiveRound();
-            startLiveRoundTracking(); 
-            showStatsScreen();
-        });
-    }
+            advanceRoundBackground();
+        }
+
+        roundStarted = true;
+        roundFinalized = false;
+        showStatsScreen();
+    });
+}
 
     const roundCompleteSummaryBtn = document.getElementById("roundCompleteSummaryBtn");
     if (roundCompleteSummaryBtn) {
