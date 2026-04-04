@@ -1,7 +1,7 @@
 const SUPABASE_URL = "https://xncgytnnekaytqmypdqv.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_UiLB55XsY_iD9m_wUNlSwA_UEjBa5fR";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const portalSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const listEl = document.getElementById("liveRoundsList");
 const detailsEl = document.getElementById("roundDetails");
@@ -34,7 +34,7 @@ if (logoutBtn) {
 async function loadLiveRounds() {
   listEl.innerHTML = "Loading...";
 
-  const { data, error } = await supabase
+  const { data, error } = await portalSupabase
     .from("live_round_status")
     .select("*")
     .order("last_update", { ascending: false });
@@ -222,7 +222,7 @@ async function clearFinished() {
     return;
   }
 
-  const { error } = await supabase
+  const { error } = await portalSupabase
     .from("live_round_status")
     .delete()
     .in("session_id", testRounds);
@@ -240,7 +240,7 @@ async function clearLiveSnapshots() {
   const confirmed = confirm("Clear all live round snapshots?");
   if (!confirmed) return;
 
-  const { error } = await supabase
+  const { error } = await portalSupabase
     .from("live_round_status")
     .delete()
     .neq("session_id", "");
@@ -258,7 +258,7 @@ async function deleteRound(sessionId) {
   const confirmed = confirm("Delete this round?");
   if (!confirmed) return;
 
-  const { error } = await supabase
+  const { error } = await portalSupabase
     .from("live_round_status")
     .delete()
     .eq("session_id", sessionId);
