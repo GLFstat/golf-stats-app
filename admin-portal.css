@@ -1,0 +1,588 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #e9e9e9;
+  color: #1f1f27;
+}
+
+.portal-shell {
+  max-width: 1380px;
+  margin: 26px auto;
+  padding: 0 18px 28px;
+}
+
+.portal-header {
+  position: relative;
+  min-height: 160px;
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+  background: url("images/Golf-ShotA11.png") center 40% / cover no-repeat;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+.header-overlay {
+  min-height: 160px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 26px 28px;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.1));
+}
+
+.header-brand h1 {
+  margin: 0;
+  font-size: 64px;
+  line-height: 0.92;
+  font-weight: 700;
+  color: #f4f4f4;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+  letter-spacing: -1px;
+}
+
+.header-brand p {
+  margin: 6px 0 0 92px;
+  font-size: 26px;
+  font-weight: 600;
+  color: #f4f4f4;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+
+.header-actions {
+  display: flex;
+  align-items: flex-start;
+}
+
+.header-btn {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: linear-gradient(to bottom, #5f8b7d, #456f63);
+  color: #f5f7f7;
+  padding: 12px 18px;
+  font-size: 17px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+}
+
+.header-btn:hover {
+  filter: brightness(1.05);
+}
+
+.portal-main {
+  background: #f1f1f1;
+  border: 1px solid #cfcfcf;
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  padding: 26px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+}
+
+.portal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.portal-card {
+  background: linear-gradient(to bottom, #fbfbfb, #f2f2f2);
+  border: 1px solid #cfcfcf;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+}
+
+.live-card,
+.completed-card {
+  min-height: 410px;
+}
+
+.maintenance-card {
+  grid-column: 2 / 3;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #d9d9d9;
+  background: linear-gradient(to bottom, #fbfbfb, #f1f1f1);
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f1f27;
+}
+
+.card-header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.icon-btn {
+  border: none;
+  background: transparent;
+  color: #c9c9c9;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.icon-btn:hover {
+  color: #7f7f7f;
+}
+
+.live-round-content {
+  padding: 16px 22px 22px;
+}
+
+.live-round-content.empty {
+  color: #7e7e88;
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+}
+
+.live-player-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #e1e1e1;
+  margin-bottom: 14px;
+}
+
+.live-player-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1f1f27;
+  margin-bottom: 4px;
+}
+
+.live-course-name {
+  font-size: 18px;
+  color: #5f5f68;
+}
+
+.live-hole-box {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.live-hole-number {
+  font-size: 62px;
+  line-height: 0.9;
+  font-weight: 700;
+  color: #1f1f27;
+}
+
+.live-hole-of {
+  font-size: 20px;
+  color: #4d4d56;
+  font-weight: 600;
+}
+
+.live-stats-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.live-stat-line {
+  font-size: 19px;
+  color: #2a2a31;
+}
+
+.live-stat-line strong {
+  font-weight: 700;
+}
+
+.live-footer-row {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.last-updated {
+  font-size: 16px;
+  color: #3e3e45;
+}
+
+.refresh-main-btn {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: linear-gradient(to bottom, #4e7d6d, #3f6758);
+  color: #ffffff;
+  padding: 12px 26px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 7px;
+  cursor: pointer;
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.15);
+}
+
+.refresh-main-btn:hover {
+  filter: brightness(1.05);
+}
+
+.completed-rounds-list {
+  padding: 10px 0 6px;
+}
+
+.rounds-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 18px;
+}
+
+.rounds-table th,
+.rounds-table td {
+  text-align: left;
+  padding: 10px 20px;
+  border-bottom: 1px solid #dddddd;
+  vertical-align: middle;
+}
+
+.rounds-table th {
+  font-size: 17px;
+  font-weight: 400;
+  color: #303038;
+  background: transparent;
+}
+
+.rounds-table td {
+  color: #2b2b31;
+}
+
+.round-action-btn {
+  border: none;
+  background: linear-gradient(to bottom, #cf4452, #b92738);
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  min-width: 88px;
+}
+
+.round-action-btn:hover {
+  filter: brightness(1.05);
+}
+
+.check-mark {
+  color: #249d44;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.maintenance-actions {
+  display: flex;
+  gap: 12px;
+  padding: 18px 20px 10px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  border: none;
+  color: #ffffff;
+  padding: 12px 18px;
+  font-size: 17px;
+  font-weight: 700;
+  border-radius: 7px;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+.gold-btn {
+  background: linear-gradient(to bottom, #d7a039, #c4891f);
+}
+
+.gray-btn {
+  background: linear-gradient(to bottom, #8f8f95, #73737a);
+}
+
+.action-btn:hover {
+  filter: brightness(1.05);
+}
+
+.maintenance-stats {
+  padding: 8px 20px 20px;
+  font-size: 16px;
+  color: #4a4a52;
+}
+
+.holes-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(54px, 1fr));
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.hole {
+  background: #ececec;
+  border: 1px solid #d2d2d2;
+  border-radius: 8px;
+  padding: 8px 4px;
+  font-size: 13px;
+  text-align: center;
+  color: #25252b;
+}
+
+.hole.saved {
+  background: linear-gradient(to bottom, #5f8b7d, #456f63);
+  border-color: #456f63;
+  color: #ffffff;
+}
+
+@media (max-width: 980px) {
+  .portal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .maintenance-card {
+    grid-column: auto;
+  }
+
+  .header-brand h1 {
+    font-size: 52px;
+  }
+
+  .header-brand p {
+    margin-left: 70px;
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 700px) {
+  .portal-shell {
+    margin: 12px auto;
+    padding: 0 10px 18px;
+  }
+
+  .portal-header {
+    min-height: 110px;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .header-overlay {
+    min-height: 110px;
+    padding: 14px 14px;
+    align-items: flex-start;
+  }
+
+  .header-brand h1 {
+    font-size: 34px;
+  }
+
+  .header-brand p {
+    margin: 2px 0 0 34px;
+    font-size: 16px;
+  }
+
+  .header-btn {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .portal-main {
+    padding: 12px;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .card-header {
+    padding: 12px 14px;
+  }
+
+  .card-header h2 {
+    font-size: 18px;
+  }
+
+  .live-round-content {
+    padding: 14px;
+  }
+
+  .live-player-name {
+    font-size: 16px;
+  }
+
+  .live-course-name {
+    font-size: 13px;
+  }
+
+  .live-hole-number {
+    font-size: 42px;
+  }
+
+  .live-hole-of {
+    font-size: 15px;
+  }
+
+  .live-stat-line {
+    font-size: 14px;
+  }
+
+  .last-updated {
+    font-size: 13px;
+  }
+
+  .refresh-main-btn {
+    padding: 9px 16px;
+    font-size: 14px;
+  }
+
+  .rounds-table {
+    font-size: 14px;
+  }
+
+  .rounds-table th,
+  .rounds-table td {
+    padding: 8px 10px;
+  }
+
+  .round-action-btn {
+    padding: 7px 10px;
+    font-size: 13px;
+    min-width: 72px;
+  }
+
+  .maintenance-actions {
+    padding: 14px 14px 8px;
+    gap: 10px;
+  }
+
+  .action-btn {
+    width: 100%;
+    font-size: 15px;
+    padding: 10px 14px;
+  }
+
+  .maintenance-stats {
+    padding: 8px 14px 14px;
+    font-size: 13px;
+  }
+
+  .holes-grid {
+    grid-template-columns: repeat(3, minmax(54px, 1fr));
+  }
+}
+
+/* ===== HEADER LOGO OVERRIDE (Stracker-header-2) ===== */
+
+.header-overlay {
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;   /* centers vertically */
+  padding: 16px 22px;
+
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.35),
+    rgba(0, 0, 0, 0.08)
+  );
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.header-logo {
+  height: 64px;
+  object-fit: contain;
+  margin-left: 6px;
+
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+}
+
+.header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.header-subtitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+
+  text-shadow:
+    0 2px 6px rgba(0,0,0,0.6),
+    0 1px 2px rgba(0,0,0,0.8);
+}
+
+/* ===== STRACKER GREEN OVERRIDE ===== */
+
+:root {
+  --stracker-green: #27b34a;
+  --stracker-green-dark: #1f8a3b;
+}
+
+/* Main action buttons */
+.refresh-main-btn,
+.header-btn {
+  background: linear-gradient(
+    to bottom,
+    var(--stracker-green),
+    var(--stracker-green-dark)
+  ) !important;
+  border: none !important;
+}
+
+/* Hover effect */
+.refresh-main-btn:hover,
+.header-btn:hover {
+  filter: brightness(1.08);
+}
+
+/* Optional: if any green cards/accents later */
+.hole.saved {
+  background: linear-gradient(
+    to bottom,
+    var(--stracker-green),
+    var(--stracker-green-dark)
+  ) !important;
+  border-color: var(--stracker-green-dark) !important;
+}
+
+/* ===== FORCE STRACKER GREEN USAGE ===== */
+
+/* Header Logout button */
+.header-btn {
+  background: linear-gradient(
+    to bottom,
+    var(--stracker-green),
+    var(--stracker-green-dark)
+  ) !important;
+}
+
+/* Main refresh button (inside Live Round panel) */
+.refresh-main-btn {
+  background: linear-gradient(
+    to bottom,
+    var(--stracker-green),
+    var(--stracker-green-dark)
+  ) !important;
+}
+
+/* Optional future buttons (safe to include now) */
+.action-btn {
+  background: linear-gradient(
+    to bottom,
+    var(--stracker-green),
+    var(--stracker-green-dark)
+  ) !important;
+}
