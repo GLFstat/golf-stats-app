@@ -90,12 +90,15 @@ body {
 .gray-btn,
 .gold-btn,
 .round-action-btn {
+  display: inline-block;
+  padding: 8px 12px;
+  font-size: 13px;
+  white-space: nowrap;
   border: none;
-  color: #fff;
-  cursor: pointer;
   border-radius: 8px;
-  font-weight: 700;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  background: #c62828;
+  color: white;
 }
 
 .header-btn,
@@ -161,6 +164,7 @@ body {
   align-items: center;
   gap: 10px;
 }
+
 
 .icon-btn {
   border: none;
@@ -277,6 +281,7 @@ body {
 .rounds-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
   font-size: 18px;
 }
 
@@ -450,7 +455,7 @@ body {
 }
 
 .total-score-value {
-  font-size: 28px;
+  font-size: 18px;
   font-weight: 700;
   margin-left: 6px;
 }
@@ -469,6 +474,14 @@ body {
 
 /* ===== HOLE TILE SIZE IMPROVEMENT ===== */
 
+.live-tile-hint {
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.8;
+  margin: 10px 0 -10px;
+}
+
+
 .hole-number {
   font-size: 14px;
   opacity: 0.8;
@@ -482,6 +495,7 @@ body {
 /* ===== HOLE TILE COLOR SYSTEM ===== */
 
 .hole {
+  border: none;
   color: #ffffff; /* keep text white */
 }
 
@@ -508,12 +522,12 @@ body {
 }
 
 .holes-grid .hole.hole-par {
-  background: #2e7d32 !important;
+  background: #27a62d !important;
   color: #ffffff !important;
 }
 
 .holes-grid .hole.hole-bogey {
-  background: #333333 !important;
+  background: #4c4b4b !important;
   color: #ffffff !important;
 }
 
@@ -524,4 +538,354 @@ body {
 .holes-grid .hole.hole-par .hole-score,
 .holes-grid .hole.hole-bogey .hole-score {
   color: #ffffff !important;
+}
+
+/* === COURSE NAME SIZE ONLY === */
+.live-course-name {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.rounds-table td,
+.rounds-table th {
+  padding: 10px 8px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.rounds-table td:last-child,
+.rounds-table th:last-child {
+  width: 110px;
+  text-align: center;
+}
+
+
+
+.live-round-last-update {
+  margin-top: 2px;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.7);
+}
+
+
+/* =========================
+   Portal custom modal
+========================= */
+
+.portal-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 9999;
+}
+
+.portal-modal-overlay.hidden {
+  display: none;
+}
+
+/* ===== CARD ===== */
+.portal-modal-card {
+  width: min(94vw, 520px);
+  background: #ffffff;                /* ✅ white card */
+  border-radius: 16px;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.35);
+  padding: 22px 20px 18px;
+  color: #111111;                    /* ✅ black text */
+  text-align: center;
+}
+
+/* ===== TITLE ===== */
+.portal-modal-card h3 {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #000000;
+}
+
+/* ===== MESSAGE ===== */
+.portal-modal-message {
+  font-size: 0.95rem;
+  line-height: 1.2;
+  color: #111111;
+  margin-bottom: 18px;
+}
+
+.portal-modal-message strong {
+  color: #000000;
+}
+
+/* ===== RED WARNING ===== */
+.portal-modal-message .warning-line {
+  display: block;
+  margin: 10px 0 10px;
+  color: #d93025;   /* clean red */
+  font-weight: 700;
+}
+
+/* ===== BUTTON ROW ===== */
+.portal-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ===== BUTTONS ===== */
+.portal-modal-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 11px 18px;
+  min-width: 150px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Green confirm (matches app feel) */
+.portal-modal-btn.primary {
+  background: linear-gradient(180deg, #1f8f43, #13672f);
+  color: #fff;
+}
+
+/* Neutral cancel */
+.portal-modal-btn.secondary {
+  background: #f2f2f2;
+  color: #111;
+  border: 1px solid #ddd;
+}
+
+/* ===== SUMMARY WRAP ===== */
+.portal-summary-wrap {
+  margin-bottom: 16px;
+}
+
+.portal-summary-wrap.hidden {
+  display: none;
+}
+
+.portal-round-summary-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* =========================
+   Live tile instruction line
+========================= */
+
+.live-round-instruction {
+  margin: 8px 0 12px;
+  font-size: 0.86rem;
+  line-height: 1.35;
+  color: rgba(255,255,255,0.72);
+  text-align: center;
+}
+
+/* =========================
+   Summary table inside modal
+========================= */
+
+.portal-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 9999;
+}
+
+.portal-modal-overlay.hidden {
+  display: none;
+}
+
+.portal-modal-card {
+  width: min(96vw, 760px);
+  max-height: 86vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 22px;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.28);
+  padding: 20px 18px 22px;
+  color: #111;
+  text-align: center;
+}
+
+.portal-modal-card h3 {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #000;
+}
+
+.portal-modal-message {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: #111;
+  margin-bottom: 14px;
+}
+
+.portal-modal-message strong {
+  color: #000;
+}
+
+.portal-modal-message .warning-line {
+  display: block;
+  margin: 10px 0 6px;
+  color: #d93025;
+  font-weight: 700;
+}
+
+.portal-summary-wrap {
+  margin-top: 6px;
+  margin-bottom: 14px;
+}
+
+.portal-summary-wrap.hidden {
+  display: none;
+}
+
+.portal-round-summary-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.portal-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.95rem;
+  background: #fff;
+}
+
+.portal-summary-table th,
+.portal-summary-table td {
+  border: 1px solid #c8c8c8;
+  padding: 8px 6px;
+  text-align: center;
+  color: #111;
+}
+
+.portal-summary-table th {
+  background: #2f7d32;
+  color: #fff;
+  font-weight: 700;
+}
+
+.portal-summary-table td {
+  background: #fff;
+}
+
+.portal-empty-summary {
+  color: #111;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.portal-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.portal-modal-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 11px 18px;
+  min-width: 150px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.portal-modal-btn.primary {
+  background: linear-gradient(180deg, #1f8f43, #13672f);
+  color: #fff;
+}
+
+.portal-modal-btn.secondary {
+  background: #f2f2f2;
+  color: #111;
+  border: 1px solid #ddd;
+}
+
+/* =========================
+   Make hole tiles feel tappable
+========================= */
+
+.hole-tile {
+  cursor: pointer;
+}
+
+.hole-tile:hover {
+  transform: translateY(-1px);
+}
+
+.hole-tile:active {
+  transform: scale(0.98);
+}
+
+
+.card-header-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.live-round-last-update {
+  font-size: 0.82rem;
+  margin-top: 2px;
+  color: rgba(94, 93, 93, 0.75);
+}
+
+
+.hole-detail-modal {
+  width: min(92vw, 420px) !important;
+  max-height: none !important;
+}
+
+.hole-detail-popup {
+  padding: 4px 2px 2px;
+}
+
+.hole-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+
+.hole-detail-item {
+  background: #f6f6f6;
+  border: 1px solid #dddddd;
+  border-radius: 12px;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.hole-detail-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #666666;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.hole-detail-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111111;
+}
+
+.live-round-instruction {
+  margin: 8px 0 12px;
+  font-size: 0.86rem;
+  line-height: 1.35;
+  color: rgba(0,0,0,0.62);
+  text-align: center;
 }

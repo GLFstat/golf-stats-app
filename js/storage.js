@@ -158,13 +158,16 @@ function buildCompletedRound() {
     };
 }
 
-async function archiveCompletedRound() {
+window.archiveCompletedRound = async function archiveCompletedRound() {
     console.log("🔥 archiveCompletedRound RUNNING");
+
     if (!roundJustCompleted || getSavedHoleCount() !== 18) {
+        console.log("[ARCHIVE] stopped early");
         return true;
     }
 
     if (roundFinalized) {
+        console.log("[ARCHIVE] already finalized");
         return true;
     }
 
@@ -173,7 +176,11 @@ async function archiveCompletedRound() {
     const round = buildCompletedRound();
     round.roundFinalized = true;
 
+    console.log("[ARCHIVE] built round:", round);
+
     const saved = await addCompletedRound(round);
+
+    console.log("[ARCHIVE] addCompletedRound returned:", saved);
 
     if (!saved) {
         alert("Could not save round history.");
@@ -181,18 +188,21 @@ async function archiveCompletedRound() {
         return false;
     }
 
-removeFromStorage(STORAGE_KEY);
-removeFromStorage("backup_round");
-removeFromStorage(ROUND_BG_INDEX_KEY);
+    if (window.deleteLiveRoundTracking) {
+        console.log("[ARCHIVE] deleting live round row from Supabase");
+        await window.deleteLiveRoundTracking();
+    } else {
+        console.warn("[ARCHIVE] deleteLiveRoundTracking is missing on window");
+    }
 
-    // IMPORTANT:
-    // Do not clear post-round navigation flags here.
-    // The app still needs them so the user can move between
-    // Round Details, Round Complete, and 19th Hole normally.
-    // These should be cleared later when a new round starts.
+    removeFromStorage(STORAGE_KEY);
+    removeFromStorage("backup_round");
+    removeFromStorage(ROUND_BG_INDEX_KEY);
+
+    console.log("[ARCHIVE] archive complete");
 
     return true;
-}
+};
 
 function finalizeCompletedRoundIfNeeded() {
     if (!roundJustCompleted) return true;

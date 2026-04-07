@@ -65,17 +65,18 @@
     return getLiveHoles().filter(h => h && h.saved);
   }
 
-  function buildHolePayload() {
-    return getLiveHoles().map((hole, index) => ({
-      holeNumber: index + 1,
-      saved: !!(hole && hole.saved),
-      score: hole?.score ?? null,
-      putts: hole?.putts ?? null,
-      fir: !!hole?.fir,
-      gir: !!hole?.gir,
-      updown: !!hole?.updown
-    }));
-  }
+function buildHolePayload() {
+  return getLiveHoles().map((hole, index) => ({
+    holeNumber: index + 1,
+    saved: !!(hole && hole.saved),
+    par: hole?.par ?? null,
+    score: hole?.score ?? null,
+    putts: hole?.putts ?? null,
+    fir: !!hole?.fir,
+    gir: !!hole?.gir,
+    updown: !!hole?.updown
+  }));
+}
 
   function buildSnapshot() {
     const details = getLiveRoundDetails();

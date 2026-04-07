@@ -11,6 +11,8 @@ window.supabaseClient = supabaseClientInstance;
 window.supabaseClient = supabaseClientInstance;
 
 window.uploadCompletedRoundToSupabase = async function (round) {
+  console.log("[SUPABASE UPLOAD] function started", round);
+
   if (!round || !window.supabaseClient) {
     console.error("Missing round or Supabase client");
     return { success: false, error: "Missing round or Supabase client" };
@@ -61,7 +63,7 @@ window.uploadCompletedRoundToSupabase = async function (round) {
   round.summary = summary;
 
   const row = {
-    player_name: details.playerName || null,
+    player_name: "Isaiah Gonzales",
     round_date: details.roundDate || null,
     round_type: details.roundType || null,
 
@@ -82,9 +84,13 @@ window.uploadCompletedRoundToSupabase = async function (round) {
     round_payload: round
   };
 
+  console.log("[SUPABASE UPLOAD] row being inserted:", row);
+
   const { error } = await window.supabaseClient
     .from("completed_rounds")
     .insert([row]);
+
+  console.log("[SUPABASE UPLOAD] insert finished, error:", error);
 
   if (error) {
     console.error("Supabase insert failed:", error);

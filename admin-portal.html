@@ -6,6 +6,7 @@
   <title>Stracker Admin Portal</title>
   <link rel="stylesheet" href="admin-portal.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/admin-portal.js" defer></script>
 </head>
 <body>
   <div class="portal-shell">
@@ -29,7 +30,10 @@
 
         <div class="portal-card live-card">
           <div class="card-header">
-            <h2>Live Round</h2>
+            <div class="card-header-title-row">
+              <h2>Live Round</h2>
+              <div id="liveRoundLastUpdate" class="live-round-last-update"></div>
+            </div>
             <div class="card-header-actions">
               <button id="refreshBtn" class="icon-btn" type="button" title="Refresh">↻</button>
             </div>
@@ -57,6 +61,8 @@
               <div class="live-stat-line"><strong>Penalties:</strong> --</div>
             </div>
 
+            <div class="live-round-instruction">Tap a hole tile to see hole details</div>
+
             <div class="holes-grid placeholder-holes">
               <div class="hole">1</div><div class="hole">2</div><div class="hole">3</div><div class="hole">4</div><div class="hole">5</div><div class="hole">6</div>
               <div class="hole">7</div><div class="hole">8</div><div class="hole">9</div><div class="hole">10</div><div class="hole">11</div><div class="hole">12</div>
@@ -72,7 +78,7 @@
 
         <div class="portal-card completed-card">
           <div class="card-header">
-            <h2>Completed Rounds</h2>
+            <h2>Live Round Snapshots</h2>
           </div>
 
           <div id="liveRoundsList" class="completed-rounds-list">
@@ -119,6 +125,22 @@
     </main>
   </div>
 
-  <script src="js/admin-portal.js"></script>
+  <!-- Portal Modal Overlay -->
+  <div id="portalModalOverlay" class="portal-modal-overlay hidden">
+    <div class="portal-modal-card">
+      <h3 id="portalModalTitle">Notice</h3>
+      <div id="portalModalMessage" class="portal-modal-message"></div>
+
+      <div id="portalModalSummaryWrap" class="portal-summary-wrap hidden">
+        <div id="portalRoundSummaryTable" class="portal-round-summary-table"></div>
+      </div>
+
+      <div id="portalModalActions" class="portal-modal-actions">
+        <button id="portalModalCancelBtn" class="portal-modal-btn secondary" type="button">Cancel</button>
+        <button id="portalModalConfirmBtn" class="portal-modal-btn primary" type="button">OK</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
