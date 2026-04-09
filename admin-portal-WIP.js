@@ -1,3 +1,6 @@
+
+console.log("PORTAL JS LOADED");
+
 const SUPABASE_URL = "https://xncgytnnekaytqmypdqv.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_UiLB55XsY_iD9m_wUNlSwA_UEjBa5fR";
 
@@ -439,12 +442,21 @@ async function openCompletedSummary() {
 
 
 async function loadLiveRounds() {
+
+  console.log("loadLiveRounds STARTED");
+
   listEl.innerHTML = "Loading...";
+
+listEl.innerHTML = "<div style='padding:20px; color:red; font-size:24px;'>TEST LIST RENDER</div>";
+detailsEl.innerHTML = "<div style='padding:20px; color:blue; font-size:24px;'>TEST DETAILS RENDER</div>";
 
   const { data, error } = await portalSupabase
     .from("live_round_status")
     .select("*")
     .order("last_update", { ascending: false });
+
+    console.log("LIVE QUERY RESULT:", data);
+console.log("LIVE QUERY ERROR:", error);
 
   if (error) {
     console.error("Error loading live rounds:", error);
@@ -1142,3 +1154,4 @@ setInterval(() => {
   loadLiveRounds();
     loadLastCompletedRound();
 }, 5000);
+
