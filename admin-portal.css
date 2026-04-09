@@ -925,8 +925,8 @@ body {
 .summary-modal-card {
   position: relative;
   z-index: 2;
-  width: min(920px, calc(100% - 24px));
-  max-height: 88vh;
+  width: min(92vw, 520px);   /* ✅ responsive width */
+  max-width: 92vw;           /* ✅ prevents overflow */
   margin: 4vh auto 0;
   background: #ffffff;
   border-radius: 18px;
@@ -953,8 +953,8 @@ body {
 }
 
 .summary-modal-body {
-  padding: 18px 22px 22px;
-  overflow: auto;
+  padding: 14px 16px;
+  overflow-x: hidden;
 }
 
 .summary-modal-close {
@@ -973,10 +973,8 @@ body {
 }
 
 .summary-top-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(100px, 1fr));
-  gap: 10px;
-  margin-bottom: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
 }
 
 .summary-stat-card {
@@ -999,9 +997,13 @@ body {
 }
 
 .summary-hole-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.94rem;
+  font-size: 0.75rem;
+  width: auto;
+}
+
+.summary-hole-table th,
+.summary-hole-table td {
+  padding: 4px 3px;
 }
 
 .summary-hole-table th,
@@ -1023,21 +1025,22 @@ body {
   text-align: left;
 }
 
-@media (max-width: 720px) {
-  .summary-top-grid {
-    grid-template-columns: repeat(2, minmax(120px, 1fr));
-  }
+.summary-hole-table tr:nth-child(10) td {
+  border-top: 6px solid #f5f7f9;
+  box-shadow: inset 0 1px 0 #bbb;
+}
 
+@media (max-width: 720px) {
 .summary-modal-card {
   position: relative;
   z-index: 2;
-  width: 640px !important;          /* FORCE smaller width */
-  max-width: calc(100% - 24px);
-  max-height: 80vh;
-  margin: 6vh auto 0;
+  width: min(92vw, 520px);
+  max-width: 92vw;
+  max-height: 85vh;
+  margin: 4vh auto 0;
   background: #ffffff;
-  border-radius: 14px;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+  border-radius: 18px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1048,16 +1051,98 @@ body {
   overflow: auto;
 }
 
-  .summary-modal-header {
-    padding: 16px 16px 10px;
+.summary-modal-header {
+  padding: 16px 16px 10px;
+  background: linear-gradient(135deg, #27b34a, #249d44);      /* Stracker green */
+  color: #ffffff;             /* white text */
+}
+
+.summary-modal-header h2 {
+  color: #ffffff;
+}
+
+.summary-meta {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+@media (max-width: 720px) {
+  .summary-modal-overlay {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .summary-modal-card {
+    width: 84vw !important;
+    max-width: 84vw !important;
+    max-height: 88vh;
+    margin: 3vh auto 0;
+    border-radius: 14px;
+  }
+
+  .summary-modal-body {
+    padding: 10px 10px 14px;
+    overflow-x: hidden;
+  }
+
+  .summary-hole-table {
+    font-size: 0.72rem;
+  }
+
+  .summary-hole-table th,
+  .summary-hole-table td {
+    padding: 4px 3px;
+  }
+
+  .summary-stat-card {
+    padding: 8px;
+  }
+
+  .summary-stat-label {
+    font-size: 0.72rem;
+  }
+
+  .summary-stat-value {
+    font-size: 0.95rem;
   }
 }
 
-
-.summary-modal .summary-modal-card {
-  width:500px !important;
-  max-width: 640px !important;
+.summary-hole-table {
+  width: 100%;
+  table-layout: fixed;
 }
+
+.summary-hole-table th,
+.summary-hole-table td {
+  padding: 5px 4px;
+}
+
+/* Give columns intentional widths */
+.summary-hole-table th:nth-child(1),
+.summary-hole-table td:nth-child(1) { width: 18%; }  /* Hole */
+
+.summary-hole-table th:nth-child(2),
+.summary-hole-table td:nth-child(2) { width: 10%; }  /* Par */
+
+.summary-hole-table th:nth-child(3),
+.summary-hole-table td:nth-child(3) { width: 12%; }  /* Score */
+
+.summary-hole-table th:nth-child(4),
+.summary-hole-table td:nth-child(4) { width: 12%; }  /* Putts */
+
+.summary-hole-table th:nth-child(5),
+.summary-hole-table td:nth-child(5) { width: 12%; }  /* FIR */
+
+.summary-hole-table th:nth-child(6),
+.summary-hole-table td:nth-child(6) { width: 12%; }  /* GIR */
+
+.summary-hole-table th:nth-child(7),
+.summary-hole-table td:nth-child(7) { width: 24%; }  /* Up & Down */
+
+}
+
+  
+
+
 
 
 .view-summary-btn {
