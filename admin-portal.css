@@ -1203,10 +1203,10 @@ body {
   }
 
   /* Keep Action column tighter */
-  .rounds-table th:nth-child(5),
-  .rounds-table td:nth-child(5) {
-    width: 90px;
-  }
+.rounds-table th:nth-child(5),
+.rounds-table td:nth-child(5) {
+  width: 90px;
+}
 
   /* Slightly reduce spacing in Course + Date */
   .rounds-table th:nth-child(1),
