@@ -178,6 +178,266 @@ if (logoutBtn) {
   });
 }
 
+async function loadLastCompletedRound() {
+  const card = document.getElementById("latestCompletedRound");
+  if (!card) return;
+
+  card.innerHTML = `<p>No completed round found yet.</p>`;
+  console.log("loadLastCompletedRound started");
+
+const { data, error } = await portalSupabase
+  .from("completed_rounds")
+  .select("*")
+  .order("created_at", { ascending: false })
+  .limit(1);
+
+  console.log("Completed rounds data:", data, "Error:", error);
+
+  if (error) {
+    console.error("Error loading last completed round:", error);
+    card.innerHTML = `<p>Could not load completed round.</p>`;
+    return;
+  }
+
+  if (!data || !data.length) {
+    card.innerHTML = `<p>No completed round found yet.</p>`;
+    return;
+  }
+
+  const round = data[0];
+  lastCompletedRoundData = round;
+
+  const playerName =
+    round.player_name ||
+    round.player ||
+    round.golfer_name ||
+    "Player";
+
+  const courseName =
+    round.course_name ||
+    round.course ||
+    round.details?.courseName ||
+    "Unknown Course";
+
+  const summary =
+    round.summary_json ||
+    round.summary ||
+    round.round_summary ||
+    {};
+
+  const totalScore =
+    round.total_score ??
+    summary.totalScore ??
+    summary.total_score ??
+    "—";
+
+  const toParRaw =
+    round.to_par ??
+    round.vs_par ??
+    summary.vsPar ??
+    summary.toPar ??
+    summary.to_par ??
+    null;
+
+  let toParText = "E";
+  if (toParRaw !== null && toParRaw !== undefined && toParRaw !== "") {
+    const num = Number(toParRaw);
+    if (!Number.isNaN(num)) {
+      if (num > 0) toParText = `+${num}`;
+      else if (num < 0) toParText = `${num}`;
+      else toParText = "E";
+    }
+  }
+
+  const finishedDate =
+    round.finished_at ||
+    round.completed_at ||
+    round.updated_at ||
+    round.created_at ||
+    round.round_date ||
+    null;
+
+  let finishedText = "No date";
+  if (finishedDate) {
+    const d = new Date(finishedDate);
+    if (!Number.isNaN(d.getTime())) {
+      finishedText = d.toLocaleDateString([], {
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+      });
+    }
+  }
+
+card.innerHTML = `
+  <table class="rounds-table">
+    <thead>
+      <tr>
+        <th>Course</th>
+        <th>Date</th>
+        <th>Score</th>
+        <th>To Par</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>${courseName}</td>
+        <td>${finishedText.replace(", ", ",<br>")}</td>
+        <td>${totalScore}</td>
+        <td>${toParText}</td>
+        <td>
+          <button class="round-action-btn summary-btn" onclick="openCompletedSummary()">Summary</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+`;
+}
+  // Summary modal  for View Summary 
+
+let lastCompletedRoundData = null;
+
+function closeCompletedSummary() {
+  const modal = document.getElementById("completedSummaryModal");
+  if (modal) modal.classList.add("hidden");
+}
+
+function formatToParText(value) {
+  const num = Number(value);
+  if (Number.isNaN(num)) return "E";
+  if (num > 0) return `+${num}`;
+  if (num < 0) return `${num}`;
+  return "E";
+}
+
+function buildCompletedSummaryHtml(payload, round) {
+  const holes = Array.isArray(payload?.holes) ? payload.holes : [];
+
+  const totalScore = round?.total_score ?? "—";
+  const toPar = round?.vs_par ?? 0;
+  const totalPutts = round?.total_putts ?? "—";
+  const firPct = round?.fir_pct ?? "—";
+  const girPct = round?.gir_pct ?? "—";
+
+  const topCards = `
+    <div class="summary-top-grid">
+      <div class="summary-stat-card">
+        <div class="summary-stat-label">Score</div>
+        <div class="summary-stat-value">${totalScore}</div>
+      </div>
+      <div class="summary-stat-card">
+        <div class="summary-stat-label">To Par</div>
+        <div class="summary-stat-value">${formatToParText(toPar)}</div>
+      </div>
+      <div class="summary-stat-card">
+        <div class="summary-stat-label">Putts</div>
+        <div class="summary-stat-value">${totalPutts}</div>
+      </div>
+      <div class="summary-stat-card">
+        <div class="summary-stat-label">FIR / GIR</div>
+        <div class="summary-stat-value">${firPct}% / ${girPct}%</div>
+      </div>
+    </div>
+  `;
+
+  if (!holes.length) {
+    return topCards + `<p>No hole-by-hole data found.</p>`;
+  }
+
+  const rows = holes.map((hole, index) => {
+    const holeNum = hole?.hole ?? index + 1;
+    const par = hole?.par ?? "—";
+    const score = hole?.score ?? "—";
+    const putts = hole?.putts ?? "—";
+
+    const fir =
+      hole?.fir === true ? "Y" :
+      hole?.fir === false ? "N" :
+      "—";
+
+    const gir =
+      hole?.gir === true ? "Y" :
+      hole?.gir === false ? "N" :
+      "—";
+
+    const upDown =
+      hole?.upAndDown === true ? "Y" :
+      hole?.upAndDown === false ? "N" :
+      hole?.up_down === true ? "Y" :
+      hole?.up_down === false ? "N" :
+      "—";
+
+    return `
+      <tr>
+        <td>Hole ${holeNum}</td>
+        <td>${par}</td>
+        <td>${score}</td>
+        <td>${putts}</td>
+        <td>${fir}</td>
+        <td>${gir}</td>
+        <td>${upDown}</td>
+      </tr>
+    `;
+  }).join("");
+
+  return `
+    ${topCards}
+    <table class="summary-hole-table">
+      <thead>
+        <tr>
+          <th>Hole</th>
+          <th>Par</th>
+          <th>Score</th>
+          <th>Putts</th>
+          <th>FIR</th>
+          <th>GIR</th>
+          <th>Up & Down</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows}
+      </tbody>
+    </table>
+  `;
+}
+
+async function openCompletedSummary() {
+  if (!lastCompletedRoundData) {
+    alert("No round data available.");
+    return;
+  }
+
+  const payload = lastCompletedRoundData.round_payload;
+
+  if (!payload) {
+    alert("No round payload found.");
+    return;
+  }
+
+  const modal = document.getElementById("completedSummaryModal");
+  const titleEl = document.getElementById("completedSummaryTitle");
+  const metaEl = document.getElementById("completedSummaryMeta");
+  const bodyEl = document.getElementById("completedSummaryBody");
+
+  if (!modal || !titleEl || !metaEl || !bodyEl) {
+    alert("Summary popup elements not found.");
+    return;
+  }
+
+  const courseName = lastCompletedRoundData.course_name || "Course";
+  const playerName = lastCompletedRoundData.player_name || "Player";
+  const roundDate = lastCompletedRoundData.round_date || "";
+
+  titleEl.textContent = `${playerName} — ${courseName}`;
+  metaEl.textContent = roundDate;
+  bodyEl.innerHTML = buildCompletedSummaryHtml(payload, lastCompletedRoundData);
+
+  modal.classList.remove("hidden");
+}
+
+
+
 async function loadLiveRounds() {
   listEl.innerHTML = "Loading...";
 
@@ -871,7 +1131,14 @@ window.openLiveHoleDetail = openLiveHoleDetail;
 window.showDetails = showDetails;
 
 loadLiveRounds();
+console.log("about to run loadLastCompletedRound");
+loadLastCompletedRound();
+console.log("finished calling loadLastCompletedRound");
+
+
+console.log("ADMIN PORTAL JS IS RUNNING");
 
 setInterval(() => {
   loadLiveRounds();
+    loadLastCompletedRound();
 }, 5000);
