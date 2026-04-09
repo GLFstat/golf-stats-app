@@ -1142,3 +1142,38 @@ setInterval(() => {
   loadLiveRounds();
     loadLastCompletedRound();
 }, 5000);
+
+/* ===== MOBILE TABLE FIX (Portal) ===== */
+@media (max-width: 700px) {
+
+  .rounds-table {
+    font-size: 13px;
+  }
+
+  .rounds-table th,
+  .rounds-table td {
+    padding: 8px 6px;
+  }
+
+  /* Force To Par to stay on one line */
+  .rounds-table th:nth-child(4),
+  .rounds-table td:nth-child(4) {
+    white-space: nowrap;
+  }
+
+  /* Keep Action column tighter */
+  .rounds-table th:nth-child(5),
+  .rounds-table td:nth-child(5) {
+    width: 90px;
+  }
+
+  /* Slightly reduce spacing in Course + Date */
+  .rounds-table th:nth-child(1),
+  .rounds-table td:nth-child(1),
+  .rounds-table th:nth-child(2),
+  .rounds-table td:nth-child(2) {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+}
