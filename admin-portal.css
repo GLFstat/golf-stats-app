@@ -1240,3 +1240,59 @@ body {
   color: #ffffff;
 }
 
+
+@media (max-width: 720px) {
+  #latestCompletedRound .rounds-table {
+    width: 100%;
+    table-layout: fixed;
+    font-size: 11px;
+  }
+
+  #latestCompletedRound .rounds-table th,
+  #latestCompletedRound .rounds-table td {
+    padding: 6px 3px;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  #latestCompletedRound .rounds-table th:nth-child(1),
+  #latestCompletedRound .rounds-table td:nth-child(1) {
+    width: 24%;
+  }
+
+  #latestCompletedRound .rounds-table th:nth-child(2),
+  #latestCompletedRound .rounds-table td:nth-child(2) {
+    width: 20%;
+  }
+
+  #latestCompletedRound .rounds-table th:nth-child(3),
+  #latestCompletedRound .rounds-table td:nth-child(3) {
+    width: 14%;
+  }
+
+  #latestCompletedRound .rounds-table th:nth-child(4),
+  #latestCompletedRound .rounds-table td:nth-child(4) {
+    width: 16%;
+    white-space: nowrap;
+  }
+
+  #latestCompletedRound .rounds-table th:nth-child(5),
+  #latestCompletedRound .rounds-table td:nth-child(5) {
+    width: 26%;
+    white-space: nowrap;
+  }
+
+  #latestCompletedRound .rounds-table th {
+    font-size: 11px;
+    line-height: 1.1;
+  }
+
+  #latestCompletedRound .round-action-btn,
+  #latestCompletedRound .summary-btn,
+  #latestCompletedRound .rounds-table button {
+    font-size: 10px;
+    padding: 5px 6px;
+    min-width: 64px;
+  }
+}
+
