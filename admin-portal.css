@@ -1245,7 +1245,7 @@ body {
   #latestCompletedRound .rounds-table {
     width: 100%;
     table-layout: fixed;
-    font-size: 11px;
+    font-size: 14px;
   }
 
   #latestCompletedRound .rounds-table th,
