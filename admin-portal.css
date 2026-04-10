@@ -1290,7 +1290,7 @@ body {
   #latestCompletedRound .round-action-btn,
   #latestCompletedRound .summary-btn,
   #latestCompletedRound .rounds-table button {
-    font-size: 10px;
+    font-size: 14px;
     padding: 5px 6px;
     min-width: 64px;
   }
