@@ -491,7 +491,13 @@ function renderCompletedRounds(rounds) {
   `;
 
   rounds.forEach((round) => {
-    const dateText = formatDate(round.round_date);
+    const liveDisplayDate =
+  round.last_update ||
+  round.updated_at ||
+  round.created_at ||
+  round.round_date;
+
+const dateText = formatDate(liveDisplayDate);
     const isTest = isTestRound(round);
 
     html += `
