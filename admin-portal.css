@@ -1442,14 +1442,19 @@ body {
 }
 
 @media (max-width: 640px) {
+@media (max-width: 640px) {
   .header-right {
+    flex-direction: column;
+    align-items: flex-end;
     gap: 6px;
   }
 
   .header-btn {
-    padding: 8px 12px;
-    font-size: 14px;
+    width: 100%;
+    max-width: 140px;
+    text-align: center;
   }
+}
 
   .admin-login-box {
     width: calc(100vw - 24px);
