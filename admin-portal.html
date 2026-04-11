@@ -9,19 +9,49 @@
   <script src="js/admin-portal.js" defer></script>
 </head>
 <body>
+
+<!-- ADMIN LOGIN OVERLAY -->
+<div id="adminLoginOverlay" class="admin-login-overlay">
+  <div class="admin-login-box">
+    <h2>Admin Access</h2>
+
+    <input 
+      type="password" 
+      id="adminPasswordInput" 
+      placeholder="Enter password" 
+    />
+
+    <button id="adminLoginBtn" type="button">Login</button>
+    <button id="closeAdminLoginBtn" type="button">Cancel</button>
+
+    <div id="adminLoginError" class="admin-login-error"></div>
+  </div>
+</div>
+
+
   <div class="portal-shell">
     <header class="portal-header">
       <div class="header-overlay">
         <div class="header-left">
           <img src="images/Stracker-header-2.png" alt="Stracker Logo" class="header-logo" />
           <div class="header-title-lockup">
-            <div class="header-subtitle">Admin Portal</div>
+            <div id="portalTitle" class="header-subtitle"></div>
           </div>
         </div>
 
-        <div class="header-right">
-          <button id="logoutBtn" class="header-btn" type="button">Logout</button>
-        </div>
+<div class="header-right">
+  <button id="loginBtn" class="header-btn" type="button">Log In</button>
+
+  <button id="openBrandingModalBtn" class="header-btn admin-only hidden" type="button">
+    Portal Branding
+  </button>
+
+  <button id="logoutBtn" class="header-btn admin-only hidden" type="button">
+    Log Out
+  </button>
+</div>
+
+
       </div>
     </header>
 
@@ -174,6 +204,40 @@
   </div>
 </div>
 
+
+
+<!-- PORTAL BRANDING MODAL -->
+<div id="brandingModal" class="branding-modal hidden">
+  <div class="branding-modal-box">
+    <h3>Portal Branding</h3>
+
+<div class="branding-section">
+  <div class="branding-label">Player Name</div>
+
+  <select id="playerNameSelect" class="branding-select">
+    <option value="">Isaiah Gonzales (Default)</option>
+    <option value="Isaiah Gonzales">Isaiah Gonzales</option>
+    <option value="Player 2">Player 2</option>
+    <option value="Player 3">Player 3</option>
+  </select>
+</div>
+
+
+    <div class="branding-section">
+      <div class="branding-label">Header Image</div>
+
+      <div class="branding-image-options">
+        <button class="branding-option-btn" type="button" data-header-image="images/AP-hdr-pics/aphdr-shot1.jpg">1</button>
+        <button class="branding-option-btn" type="button" data-header-image="images/AP-hdr-pics/aphdr-shot2.jpg">2</button>
+        <button class="branding-option-btn" type="button" data-header-image="images/AP-hdr-pics/aphdr-shot3.jpg">3</button>
+      </div>
+    </div>
+
+    <div class="branding-actions">
+      <button id="closeBrandingModalBtn" class="header-btn" type="button">Close</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

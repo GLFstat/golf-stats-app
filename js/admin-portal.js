@@ -24,6 +24,129 @@ let currentPortalModalResolver = null;
 let liveRoundsCache = [];
 let currentRounds = [];
 
+
+
+// =========================
+// ADMIN LOGIN
+// =========================
+
+const ADMIN_PASSWORD = "fairway123";
+const ADMIN_LOGIN_KEY = "strackerAdminLoggedIn";
+
+function showAdminLogin() {
+  const overlay = document.getElementById("adminLoginOverlay");
+  if (overlay) overlay.style.display = "flex";
+}
+
+function hideAdminLogin() {
+  const overlay = document.getElementById("adminLoginOverlay");
+  if (overlay) overlay.style.display = "none";
+}
+
+function isAdminLoggedIn() {
+  return localStorage.getItem(ADMIN_LOGIN_KEY) === "true";
+}
+
+function setAdminLoggedIn(value) {
+  localStorage.setItem(ADMIN_LOGIN_KEY, value ? "true" : "false");
+}
+
+function updateAdminHeaderButtons() {
+  const loginBtn = document.getElementById("loginBtn");
+  const brandingBtn = document.getElementById("openBrandingModalBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  const loggedIn = isAdminLoggedIn();
+
+  if (loginBtn) {
+    loginBtn.classList.toggle("hidden", loggedIn);
+  }
+
+  if (brandingBtn) {
+    brandingBtn.classList.toggle("hidden", !loggedIn);
+  }
+
+  if (logoutBtn) {
+    logoutBtn.classList.toggle("hidden", !loggedIn);
+  }
+}
+
+function handleAdminLogin() {
+  const passwordInput = document.getElementById("adminPasswordInput");
+  const errorBox = document.getElementById("adminLoginError");
+
+  if (!passwordInput || !errorBox) return;
+
+  const enteredPassword = passwordInput.value.trim();
+
+  if (enteredPassword === ADMIN_PASSWORD) {
+    setAdminLoggedIn(true);
+    hideAdminLogin();
+    updateAdminHeaderButtons();
+    errorBox.textContent = "";
+    passwordInput.value = "";
+  } else {
+    errorBox.textContent = "Incorrect password.";
+  }
+}
+
+function handleAdminLogout() {
+  setAdminLoggedIn(false);
+  hideAdminLogin();
+  updateAdminHeaderButtons();
+
+  const passwordInput = document.getElementById("adminPasswordInput");
+  const errorBox = document.getElementById("adminLoginError");
+
+  if (passwordInput) passwordInput.value = "";
+  if (errorBox) errorBox.textContent = "";
+}
+
+function initAdminLogin() {
+  const loginBtn = document.getElementById("loginBtn");
+  const loginSubmitBtn = document.getElementById("adminLoginBtn");
+  const closeAdminLoginBtn = document.getElementById("closeAdminLoginBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const passwordInput = document.getElementById("adminPasswordInput");
+
+  hideAdminLogin();
+  updateAdminHeaderButtons();
+
+  if (loginBtn) {
+    loginBtn.addEventListener("click", showAdminLogin);
+  }
+
+  if (loginSubmitBtn) {
+    loginSubmitBtn.addEventListener("click", handleAdminLogin);
+  }
+
+  if (closeAdminLoginBtn) {
+    closeAdminLoginBtn.addEventListener("click", hideAdminLogin);
+  }
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", handleAdminLogout);
+  }
+
+  if (passwordInput) {
+    passwordInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        handleAdminLogin();
+      }
+    });
+  }
+}
+
+
+  if (isAdminLoggedIn()) {
+    hideAdminLogin();
+  } else {
+    showAdminLogin();
+  }
+
+
+
+
 function closePortalModal() {
   const modalCard = portalModalOverlay?.querySelector(".portal-modal-card");
   if (modalCard) {
@@ -174,7 +297,7 @@ if (clearLiveBtn) {
 
 if (logoutBtn) {
   logoutBtn.addEventListener("click", () => {
-    alert("Logout can be wired later.");
+  
   });
 }
 
@@ -1003,11 +1126,15 @@ function getLiveRoundScoreDisplay(round) {
 
   if (!holesCompleted) return "--";
 
-  const vsPar = totalScore - (holesCompleted * 4);
+  const roundVsPar = getRoundVsParFromHoles(round);
 
-  if (vsPar === 0) return `E thru ${holesCompleted}`;
-  if (vsPar > 0) return `+${vsPar} thru ${holesCompleted}`;
-  return `${vsPar} thru ${holesCompleted}`;
+  if (roundVsPar === null || roundVsPar === undefined) {
+    return `${totalScore} thru ${holesCompleted}`;
+  }
+
+  if (roundVsPar === 0) return `E thru ${holesCompleted}`;
+  if (roundVsPar > 0) return `+${roundVsPar} thru ${holesCompleted}`;
+  return `${roundVsPar} thru ${holesCompleted}`;
 }
 
 function isTestRound(round) {
@@ -1131,8 +1258,109 @@ async function deleteRound(sessionId, courseName = "this round", status = "", ro
   loadLiveRounds();
 }
 
+
+
+// =========================
+// PORTAL BRANDING MODAL
+// =========================
+
+const ADMIN_PLAYER_NAME_KEY = "strackerAdminPlayerName";
+const ADMIN_HEADER_IMAGE_KEY = "strackerAdminHeaderImage";
+const DEFAULT_HEADER_IMAGE = "images/AP-hdr-pics/aphdr-shot1.jpg";
+
+function applyPortalHeaderImage(imagePath) {
+  const header = document.querySelector(".portal-header");
+  if (!header) return;
+
+  const finalImage = imagePath || DEFAULT_HEADER_IMAGE;
+  header.style.backgroundImage = `url("${finalImage}")`;
+  header.style.backgroundSize = "cover";
+  header.style.backgroundPosition = "center";
+  header.style.backgroundRepeat = "no-repeat";
+}
+
+function openBrandingModal() {
+  const modal = document.getElementById("brandingModal");
+  if (modal) modal.classList.remove("hidden");
+}
+
+function closeBrandingModal() {
+  const modal = document.getElementById("brandingModal");
+  if (modal) modal.classList.add("hidden");
+}
+
+function initPortalBrandingSafe() {
+
+const playerSelect = document.getElementById("playerNameSelect");
+
+if (playerSelect) {
+  // Set initial value
+  playerSelect.value = getSavedPlayerName();
+
+  playerSelect.addEventListener("change", function () {
+    savePlayerName(playerSelect.value);
+    updatePortalTitle();
+  });
+}
+
+updatePortalTitle();
+
+  const openBtn = document.getElementById("openBrandingModalBtn");
+  const closeBtn = document.getElementById("closeBrandingModalBtn");
+  const optionButtons = document.querySelectorAll(".branding-option-btn");
+
+  if (openBtn) {
+    openBtn.addEventListener("click", openBrandingModal);
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closeBrandingModal);
+  }
+
+  optionButtons.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const imagePath = btn.dataset.headerImage;
+      if (!imagePath) return;
+
+      localStorage.setItem(ADMIN_HEADER_IMAGE_KEY, imagePath);
+      applyPortalHeaderImage(imagePath);
+    });
+  });
+
+  const savedImage = localStorage.getItem(ADMIN_HEADER_IMAGE_KEY) || DEFAULT_HEADER_IMAGE;
+  applyPortalHeaderImage(savedImage);
+}
+
+function getSavedPlayerName() {
+  return localStorage.getItem(ADMIN_PLAYER_NAME_KEY) || "";
+}
+
+function savePlayerName(name) {
+  localStorage.setItem(ADMIN_PLAYER_NAME_KEY, name);
+}
+
+function getPortalPlayerName() {
+  const saved = getSavedPlayerName();
+  return saved && saved.trim() !== "" ? saved : "Isaiah Gonzales";
+}
+
+function updatePortalTitle() {
+  const el = document.getElementById("portalTitle");
+  if (!el) return;
+
+  const name = getPortalPlayerName();
+  el.textContent = `Admin Portal for ${name}`;
+}
+
+
+
+
 window.loadLiveRounds = loadLiveRounds;
 window.deleteRound = deleteRound;
+initAdminLogin();
+
+initPortalBrandingSafe();
+
 window.openLiveHoleDetail = openLiveHoleDetail;
 window.showDetails = showDetails;
 
