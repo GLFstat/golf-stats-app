@@ -618,17 +618,17 @@ const rows = holes.map((hole, index) => {
   const penalties = getPenaltyCount(hole);
 
   return `
-    <tr>
-  <td>H${holeNum}</td>
+  <tr>
+  <td>${holeNum}</td>
+  <td>${par}</td>
+  <td class="${scoreClass}"><strong>${scoreDisplay}</strong></td>
+  <td>${fir === "Y" ? "<strong>Y</strong>" : fir}</td>
+  <td>${gir === "Y" ? "<strong>Y</strong>" : gir}</td>
+  <td>${putts}</td>
   <td>${upDown === "Y" ? "<strong>Y</strong>" : upDown}</td>
   <td>${sandSave === "Y" ? "<strong>Y</strong>" : sandSave}</td>
   <td>${penalties}</td>
-  <td>${par}</td>
-  <td class="${scoreClass}"><strong>${scoreDisplay}</strong></td>
-  <td>${putts}</td>
-  <td>${fir === "Y" ? "<strong>Y</strong>" : fir}</td>
-  <td>${gir === "Y" ? "<strong>Y</strong>" : gir}</td>
-</tr>
+  </tr
   `;
 }).join("");
 
@@ -642,15 +642,16 @@ const rows = holes.map((hole, index) => {
         <thead>
           <tr>
           <tr>
-  <th>H</th>
-  <th>U&D</th>
-  <th>Snd</th>
-  <th>Pen</th>
+<tr>
+  <th>Hole</th>
   <th>Par</th>
   <th>Score</th>
-  <th>Pt</th>
   <th>FIR</th>
   <th>GIR</th>
+  <th>Putts</th>
+  <th>U&D</th>
+  <th>SndSv</th>
+  <th>Pnlty</th>
 </tr>
         </thead>
         <tbody>
