@@ -1,3 +1,7 @@
+// =========================
+// SUPABASE / DOM REFERENCES
+// =========================
+
 const SUPABASE_URL = "https://xncgytnnekaytqmypdqv.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_UiLB55XsY_iD9m_wUNlSwA_UEjBa5fR";
 
@@ -28,6 +32,8 @@ let currentRounds = [];
 
 // =========================
 // ADMIN LOGIN
+// Portal stays visible by default.
+// Login popup opens only when Log In is tapped.
 // =========================
 
 const ADMIN_PASSWORD = "fairway123";
@@ -109,6 +115,8 @@ function initAdminLogin() {
   const logoutBtn = document.getElementById("logoutBtn");
   const passwordInput = document.getElementById("adminPasswordInput");
 
+  // Portal should always be visible on page load.
+  // Keep popup hidden until user taps Log In.
   hideAdminLogin();
   updateAdminHeaderButtons();
 
@@ -138,14 +146,6 @@ function initAdminLogin() {
 }
 
 
-  if (isAdminLoggedIn()) {
-    hideAdminLogin();
-  } else {
-    showAdminLogin();
-  }
-
-
-
 
 function closePortalModal() {
   const modalCard = portalModalOverlay?.querySelector(".portal-modal-card");
@@ -162,6 +162,11 @@ function closePortalModal() {
   if (portalModalConfirmBtn) portalModalConfirmBtn.textContent = "OK";
   currentPortalModalResolver = null;
 }
+
+// =========================
+// PORTAL MODAL HELPERS
+// Shared alert / confirm / summary modal functions.
+// =========================
 
 function showPortalAlert(title, message, confirmText = "OK") {
   return new Promise((resolve) => {
@@ -434,8 +439,57 @@ function formatToParText(value) {
   return "E";
 }
 
+
+// =========================
+// COMPLETED ROUND SUMMARY BUILDER
+// Builds the completed-round summary popup content.
+// =========================
+
 function buildCompletedSummaryHtml(payload, round) {
   const holes = Array.isArray(payload?.holes) ? payload.holes : [];
+
+  function isYes(value) {
+  return (
+    value === true ||
+    value === "true" ||
+    value === "TRUE" ||
+    value === 1 ||
+    value === "1" ||
+    value === "yes" ||
+    value === "Yes" ||
+    value === "Y" ||
+    value === "y"
+  );
+}
+
+  function getPenaltyCount(hole) {
+    const raw =
+      hole?.penalties ??
+      hole?.penalty ??
+      hole?.penaltyStrokes ??
+      hole?.penalty_strokes ??
+      0;
+
+    const num = Number(raw);
+    return Number.isNaN(num) ? 0 : num;
+  }
+
+  function getUpDownValue(hole) {
+  return (
+    hole?.upAndDown ??
+    hole?.up_and_down ??
+    hole?.up_down ??
+    hole?.upDown ??
+    hole?.updown ??
+    hole?.upDowns ??
+    hole?.up_downs ??
+    null
+  );
+}
+
+  function getSandSaveValue(hole) {
+    return hole?.sandSave ?? hole?.sand_save ?? hole?.sand ?? null;
+  }
 
   const totalScore = round?.total_score ?? "—";
   const toPar = round?.vs_par ?? 0;
@@ -443,85 +497,167 @@ function buildCompletedSummaryHtml(payload, round) {
   const firPct = round?.fir_pct ?? "—";
   const girPct = round?.gir_pct ?? "—";
 
-  const topCards = `
-    <div class="summary-top-grid">
-      <div class="summary-stat-card">
-        <div class="summary-stat-label">Score</div>
-        <div class="summary-stat-value">${totalScore}</div>
-      </div>
-      <div class="summary-stat-card">
-        <div class="summary-stat-label">To Par</div>
-        <div class="summary-stat-value">${formatToParText(toPar)}</div>
-      </div>
-      <div class="summary-stat-card">
-        <div class="summary-stat-label">Putts</div>
-        <div class="summary-stat-value">${totalPutts}</div>
-      </div>
-      <div class="summary-stat-card">
-        <div class="summary-stat-label">FIR / GIR</div>
-        <div class="summary-stat-value">${firPct}% / ${girPct}%</div>
-      </div>
+  const upDownTotal = holes.reduce((sum, hole) => {
+    return sum + (isYes(getUpDownValue(hole)) ? 1 : 0);
+  }, 0);
+
+  const sandSaveTotal = holes.reduce((sum, hole) => {
+    return sum + (isYes(getSandSaveValue(hole)) ? 1 : 0);
+  }, 0);
+
+  const penaltiesTotal = holes.reduce((sum, hole) => {
+    return sum + getPenaltyCount(hole);
+  }, 0);
+
+const topCards = `
+  <div class="summary-top-grid">
+
+    <div class="summary-stat-card">
+      <div class="summary-stat-label">Score</div>
+      <div class="summary-stat-value">${totalScore}</div>
     </div>
-  `;
+
+    <div class="summary-stat-card">
+      <div class="summary-stat-label">To Par</div>
+      <div class="summary-stat-value">${formatToParText(toPar)}</div>
+    </div>
+
+    <div class="summary-stat-card">
+      <div class="summary-stat-label">FIR %</div>
+      <div class="summary-stat-value">${firPct}%</div>
+    </div>
+
+     <div class="summary-stat-card">
+      <div class="summary-stat-label">GIR %</div>
+      <div class="summary-stat-value">${girPct}%</div>
+    </div>
+
+
+    <div class="summary-stat-card">
+      <div class="summary-stat-label">Putts</div>
+      <div class="summary-stat-value">${totalPutts}</div>
+    </div>
+
+      <div class="summary-stat-card">
+      <div class="summary-stat-label">Up & Downs</div>
+      <div class="summary-stat-value">${upDownTotal}</div>
+    </div>
+
+    <div class="summary-stat-card">
+      <div class="summary-stat-label">GIR %</div>
+      <div class="summary-stat-value">${girPct}%</div>
+    </div>
+
+    <div class="summary-stat-card">
+      <div class="summary-stat-label">Sand Saves</div>
+      <div class="summary-stat-value">${sandSaveTotal}</div>
+    </div>
+
+    <div class="summary-stat-card">
+      <div class="summary-stat-label">Penalties</div>
+      <div class="summary-stat-value">${penaltiesTotal}</div>
+    </div>
+
+  </div>
+`;
 
   if (!holes.length) {
     return topCards + `<p>No hole-by-hole data found.</p>`;
   }
 
-  const rows = holes.map((hole, index) => {
-    const holeNum = hole?.hole ?? index + 1;
-    const par = hole?.par ?? "—";
-    const score = hole?.score ?? "—";
-    const putts = hole?.putts ?? "—";
+const rows = holes.map((hole, index) => {
+  const holeNum = hole?.hole ?? index + 1;
+  const par = hole?.par ?? "—";
+  const rawScore = hole?.score ?? null;
+  const putts = hole?.putts ?? "—";
 
-    const fir =
-      hole?.fir === true ? "Y" :
-      hole?.fir === false ? "N" :
-      "—";
+  let scoreDisplay = "—";
+  let scoreClass = "";
 
-    const gir =
-      hole?.gir === true ? "Y" :
-      hole?.gir === false ? "N" :
-      "—";
+  const parNum = Number(par);
+  const scoreNum = Number(rawScore);
 
-    const upDown =
-      hole?.upAndDown === true ? "Y" :
-      hole?.upAndDown === false ? "N" :
-      hole?.up_down === true ? "Y" :
-      hole?.up_down === false ? "N" :
-      "—";
+  if (!Number.isNaN(parNum) && !Number.isNaN(scoreNum)) {
+    const diff = scoreNum - parNum;
 
-    return `
-      <tr>
-        <td>Hole ${holeNum}</td>
-        <td>${par}</td>
-        <td>${score}</td>
-        <td>${putts}</td>
-        <td>${fir}</td>
-        <td>${gir}</td>
-        <td>${upDown}</td>
-      </tr>
-    `;
-  }).join("");
+    if (diff === 0) {
+      scoreDisplay = "E";
+      scoreClass = "score-even";
+    } else if (diff < 0) {
+      scoreDisplay = `${diff}`;
+      scoreClass = "score-under";
+    } else {
+      scoreDisplay = `+${diff}`;
+      scoreClass = "score-over";
+    }
+  }
+
+  const fir =
+    hole?.fir === true ? "Y" :
+    hole?.fir === false ? "N" :
+    "—";
+
+  const gir =
+    hole?.gir === true ? "Y" :
+    hole?.gir === false ? "N" :
+    "—";
+
+  const upDownRaw = getUpDownValue(hole);
+
+  const upDown =
+    isYes(upDownRaw) ? "Y" :
+    upDownRaw === false || upDownRaw === "false" || upDownRaw === "N" || upDownRaw === "n" || upDownRaw === "No" || upDownRaw === "no"
+      ? "N"
+      : "—";
+
+  const sandSave =
+    isYes(getSandSaveValue(hole)) ? "Y" :
+    getSandSaveValue(hole) === false ? "N" :
+    "—";
+
+  const penalties = getPenaltyCount(hole);
+
+  return `
+    <tr>
+  <td>H${holeNum}</td>
+  <td>${upDown === "Y" ? "<strong>Y</strong>" : upDown}</td>
+  <td>${sandSave === "Y" ? "<strong>Y</strong>" : sandSave}</td>
+  <td>${penalties}</td>
+  <td>${par}</td>
+  <td class="${scoreClass}"><strong>${scoreDisplay}</strong></td>
+  <td>${putts}</td>
+  <td>${fir === "Y" ? "<strong>Y</strong>" : fir}</td>
+  <td>${gir === "Y" ? "<strong>Y</strong>" : gir}</td>
+</tr>
+  `;
+}).join("");
 
   return `
     ${topCards}
-    <table class="summary-hole-table">
-      <thead>
-        <tr>
-          <th>Hole</th>
-          <th>Par</th>
-          <th>Score</th>
-          <th>Putts</th>
-          <th>FIR</th>
-          <th>GIR</th>
-          <th>Up & Down</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${rows}
-      </tbody>
-    </table>
+
+    <div class="summary-hole-section-title">Hole Details</div>
+
+    <div class="summary-hole-table-wrap">
+      <table class="summary-hole-table">
+        <thead>
+          <tr>
+          <tr>
+  <th>H</th>
+  <th>U&D</th>
+  <th>Snd</th>
+  <th>Pen</th>
+  <th>Par</th>
+  <th>Score</th>
+  <th>Pt</th>
+  <th>FIR</th>
+  <th>GIR</th>
+</tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+    </div>
   `;
 }
 
@@ -548,15 +684,19 @@ async function openCompletedSummary() {
     return;
   }
 
-  const courseName = lastCompletedRoundData.course_name || "Course";
-  const playerName = lastCompletedRoundData.player_name || "Player";
-  const roundDate = lastCompletedRoundData.round_date || "";
+const courseName = lastCompletedRoundData.course_name || "Course";
+const playerName = lastCompletedRoundData.player_name || "Player";
+const roundDate = lastCompletedRoundData.round_date || "";
+const roundType =
+  lastCompletedRoundData.round_type ||
+  lastCompletedRoundData.type ||
+  "Round";
 
-  titleEl.textContent = `${playerName} — ${courseName}`;
-  metaEl.textContent = roundDate;
-  bodyEl.innerHTML = buildCompletedSummaryHtml(payload, lastCompletedRoundData);
+titleEl.textContent = `${playerName} — ${courseName}`;
+metaEl.textContent = `${roundDate}  -  ${roundType}`;
+bodyEl.innerHTML = buildCompletedSummaryHtml(payload, lastCompletedRoundData);
 
-  modal.classList.remove("hidden");
+modal.classList.remove("hidden");
 }
 
 
@@ -873,6 +1013,12 @@ function openLiveHoleDetail(index) {
   showPortalHoleDetailModal(`Hole ${holeNumber} Details`, htmlContent);
 }
 
+
+// =========================
+// LIVE ROUND DETAIL PANEL
+// Main right-side portal detail area, not the popup summary.
+// =========================
+
 function showDetails(round) {
   window.currentLiveRoundForSummary = round;
 
@@ -950,7 +1096,7 @@ function showDetails(round) {
   escapeHtml(
     (round.player_name && round.player_name.trim())
       ? round.player_name
-      : "Isaiah Gonzales"
+      : "I Gonzales"
   )
 }</div>
         <div class="live-course-name">${escapeHtml(round.course_name || "Unknown Course")}</div>
@@ -1153,6 +1299,15 @@ function escapeHtml(str) {
 }
 
 async function clearFinished() {
+
+  if (!isAdminLoggedIn()) {
+    await showPortalAlert(
+      "Admin Login Required",
+      "Please log in before using maintenance delete actions."
+    );
+    return;
+  }
+
   const testRounds = currentRounds.filter(isTestRound);
 
   if (!testRounds.length) {
@@ -1195,6 +1350,15 @@ async function clearFinished() {
 }
 
 async function clearLiveSnapshots() {
+
+  if (!isAdminLoggedIn()) {
+    await showPortalAlert(
+      "Admin Login Required",
+      "Please log in before using maintenance delete actions."
+    );
+    return;
+  }
+  
   const message =
     "Clear all live round snapshots?\n\n" +
     "This will delete all current rows from live_round_status only.\n\n" +
@@ -1222,7 +1386,14 @@ async function clearLiveSnapshots() {
 }
 
 async function deleteRound(sessionId, courseName = "this round", status = "", roundDate = "") {
-  let message = `<strong>Are you usure you want to delete this entry?</strong><br><br>`;
+    if (!isAdminLoggedIn()) {
+    await showPortalAlert(
+      "Admin Login Required",
+      "Please log in before deleting live round snapshots."
+    );
+    return;
+  }
+  let message = `<strong>Are you sure you want to delete this entry?</strong><br><br>`;
   message += `<strong>Course:</strong> ${courseName}`;
 
   if (roundDate) {
@@ -1341,7 +1512,7 @@ function savePlayerName(name) {
 
 function getPortalPlayerName() {
   const saved = getSavedPlayerName();
-  return saved && saved.trim() !== "" ? saved : "Isaiah Gonzales";
+  return saved && saved.trim() !== "" ? saved : "I Gonzales";
 }
 
 function updatePortalTitle() {
